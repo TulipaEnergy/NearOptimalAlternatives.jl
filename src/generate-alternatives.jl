@@ -1,4 +1,4 @@
-export generate_alternatives
+export generate_alternatives!, generate_alternatives
 
 """
     result = generate_alternatives!(
@@ -38,7 +38,7 @@ function generate_alternatives!(
   @info "Creating model for generating alternatives."
   create_alternative_generating_problem!(model, optimality_gap, metric, fixed_variables)
   @info "Solving model."
-  optimize!(model)
+  JuMP.optimize!(model)
   @info "Solution #1/$n_alternatives found." solution_summary(model)
   update_solutions!(result, model)
 
@@ -47,10 +47,59 @@ function generate_alternatives!(
     @info "Reconfiguring model for generating alternatives."
     add_solution!(model, metric)
     @info "Solving model."
-    optimize!(model)
+    JuMP.optimize!(model)
     @info "Solution #$i/$n_alternatives found." solution_summary(model)
     update_solutions!(result, model)
   end
 
   return result
+end
+
+function generate_alternatives(
+  model::JuMP.Model,
+  optimality_gap::Float64,
+  n_alternatives::Int64,
+  metaheuristic_algorithm::Metaheuristics.Algorithm;
+  metric::Distances.SemiMetric = SqEuclidean(),
+  fixed_variables::Vector{VariableRef} = VariableRef[],
+)
+  if !is_solved_and_feasible(model)
+    throw(ArgumentError("JuMP model has not been solved."))
+  elseif optimality_gap < 0
+    throw(ArgumentError("Optimality gap (= $optimality_gap) should be at least 0."))
+  elseif n_alternatives < 1
+    throw(ArgumentError("Number of alternatives (= $n_alternatives) should be at least 1."))
+  end
+
+  @info "Setting up MGA problem and solver."
+  # Obtain the solution values for all variables, separated in fixed and non-fixed variables.
+  initial_solution = OrderedDict()
+  fixed_variable_solutions = Dict()
+  for v in all_variables(model)
+    if v in fixed_variables
+      fixed_variable_solutions[v] = value(v)
+    else
+      initial_solution[v] = value(v)
+    end
+  end
+
+  problem = create_alternative_generating_problem(
+    model,
+    metaheuristic_algorithm,
+    initial_solution,
+    optimality_gap,
+    metric,
+    fixed_variables,
+  )
+  @info "Solving MGA problem."
+  result = run_alternative_generating_problem!(problem)
+  @info "Solution #1/$n_solutions found." result minimizer(result)
+
+  for i = 2:n_solutions
+    @info "Reconfiguring MGA problem with new solution."
+    add_solution!(problem, result, metric)
+    @info "Solving MGA problem."
+    result = run_alternative_generating_problem!(problem)
+    @info "Solution #$i/$n_solutions found." result minimizer(result)
+  end
 end
