@@ -7,7 +7,7 @@
     @variable(model, 0 ≤ x_1 ≤ 1)
     @variable(model, 0 ≤ x_2 ≤ 1)
     @objective(model, Max, x_1 + x_2)
-    optimize!(model)
+    JuMP.optimize!(model)
     # Store the values of `x_1` and `x_2` to test that the correct values are used in the created alternative generation problem.
     x_1_res = value(x_1)
     x_2_res = value(x_2)
@@ -27,7 +27,7 @@
     @variable(model, 1 ≤ x_1 ≤ 2)
     @variable(model, 1 ≤ x_2 ≤ 2)
     @objective(model, Min, x_1 + x_2)
-    optimize!(model)
+    JuMP.optimize!(model)
     # Store the values of `x_1` and `x_2` to test that the correct values are used in the created alternative generation problem.
     x_1_res = value(x_1)
     x_2_res = value(x_2)
@@ -53,7 +53,7 @@
     @variable(model, 0 ≤ x_1 ≤ 1)
     @variable(model, 0 ≤ x_2 ≤ 1)
     @objective(model, Max, x_1 + x_2)
-    optimize!(model)
+    JuMP.optimize!(model)
     # Store the values of `x_1` and `x_2` to test that the correct values are used in the created alternative generation problem.
     x_1_res = value(x_1)
     x_2_res = value(x_2)
@@ -82,7 +82,7 @@ end
   @variable(model, 0 ≤ x_2 ≤ 1)
   @objective(model, Max, (x_1 - 1)^2 + (x_2 - 1)^2)
   @constraint(model, original_objective, x_1 + x_2 ≥ 1.8)
-  optimize!(model)
+  JuMP.optimize!(model)
   # Store the values of `x_1` and `x_2` to test that the correct values are used in the created alternative generation problem.
   x_1_res = value(x_1)
   x_2_res = value(x_2)
