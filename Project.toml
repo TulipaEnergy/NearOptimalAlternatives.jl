@@ -12,4 +12,4 @@ Metaheuristics = "bcdb8e00-2c21-11e9-3065-2b553b22f898"
 
 [compat]
 julia = "1.6"
-Metaheuristics = "3.3.5"
+Metaheuristics = "3.3"
