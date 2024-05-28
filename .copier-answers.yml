@@ -5,7 +5,7 @@ AuthorEmail: m.arnoldus-1@tudelft.nl
 AuthorName: Matthijs Arnoldus
 JuliaMinVersion: '1.6'
 License: Apache-2.0
-PackageName: MGA
+PackageName: NearOptimalAlternatives
 PackageOwner: TulipaEnergy
 PackageUUID: a88418a5-8dc5-4f1c-8a3e-d5a75ec49c70
 RunJuliaNightlyOnCI: false

@@ -4,7 +4,7 @@
 #
 [deps]
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
-MGA = "a88418a5-8dc5-4f1c-8a3e-d5a75ec49c70"
+NearOptimalAlternatives = "a88418a5-8dc5-4f1c-8a3e-d5a75ec49c70"
 
 [compat]
 Documenter = "1"

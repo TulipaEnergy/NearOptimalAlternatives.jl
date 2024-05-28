@@ -1,18 +1,23 @@
-using MGA
+using NearOptimalAlternatives
 using Documenter
 
-DocMeta.setdocmeta!(MGA, :DocTestSetup, :(using MGA); recursive = true)
+DocMeta.setdocmeta!(
+  NearOptimalAlternatives,
+  :DocTestSetup,
+  :(using NearOptimalAlternatives);
+  recursive = true,
+)
 
 makedocs(;
-  modules = [MGA],
+  modules = [NearOptimalAlternatives],
   doctest = true,
   linkcheck = true,
   authors = "Matthijs Arnoldus <m.arnoldus-1@tudelft.nl> and contributors",
-  repo = "https://github.com/TulipaEnergy/MGA.jl/blob/{commit}{path}#{line}",
-  sitename = "MGA.jl",
+  repo = "https://github.com/TulipaEnergy/NearOptimalAlternatives.jl/blob/{commit}{path}#{line}",
+  sitename = "NearOptimalAlternatives.jl",
   format = Documenter.HTML(;
     prettyurls = get(ENV, "CI", "false") == "true",
-    canonical = "https://TulipaEnergy.github.io/MGA.jl",
+    canonical = "https://TulipaEnergy.github.io/NearOptimalAlternatives.jl",
     assets = ["assets/style.css"],
   ),
   pages = [
@@ -23,4 +28,4 @@ makedocs(;
   ],
 )
 
-deploydocs(; repo = "github.com/TulipaEnergy/MGA.jl", push_preview = true)
+deploydocs(; repo = "github.com/TulipaEnergy/NearOptimalAlternatives.jl", push_preview = true)

@@ -1,7 +1,7 @@
 ```@meta
-CurrentModule = MGA
+CurrentModule = NearOptimalAlternatives
 ```
 
-# MGA
+# NearOptimalAlternatives
 
-Documentation for [MGA](https://github.com/TulipaEnergy/MGA.jl).
+Documentation for [NearOptimalAlternatives](https://github.com/TulipaEnergy/NearOptimalAlternatives.jl).

@@ -41,9 +41,9 @@ jobs:
       - run: |
           julia --project=docs -e '
             using Documenter: DocMeta, doctest
-            using MGA
-            DocMeta.setdocmeta!(MGA, :DocTestSetup, :(using MGA); recursive=true)
-            doctest(MGA)'
+            using NearOptimalAlternatives
+            DocMeta.setdocmeta!(NearOptimalAlternatives, :DocTestSetup, :(using NearOptimalAlternatives); recursive=true)
+            doctest(NearOptimalAlternatives)'
       - run: julia --project=docs docs/make.jl
         env:
           JULIA_PKG_SERVER: ""

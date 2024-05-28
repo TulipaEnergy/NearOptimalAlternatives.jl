@@ -1,4 +1,4 @@
-using MGA
+using NearOptimalAlternatives
 using Test
 using Ipopt
 using JuMP

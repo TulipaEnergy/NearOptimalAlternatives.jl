@@ -40,7 +40,7 @@ If this is the first time you work with this repository, follow the instructions
 3. Add this repo as a remote:
 
    ```bash
-   git remote add orgremote https://github.com/TulipaEnergy/MGA.jl
+   git remote add orgremote https://github.com/TulipaEnergy/NearOptimalAlternatives.jl
    ```
 
 ## Working on a new issue

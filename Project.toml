@@ -1,4 +1,4 @@
-name = "MGA"
+name = "NearOptimalAlternatives"
 uuid = "a88418a5-8dc5-4f1c-8a3e-d5a75ec49c70"
 authors = ["Matthijs Arnoldus <m.arnoldus-1@tudelft.nl> and contributors"]
 version = "0.1.0"
@@ -11,5 +11,8 @@ MathOptInterface = "b8f27783-ece8-5eb3-8dc8-9495eed66fee"
 Metaheuristics = "bcdb8e00-2c21-11e9-3065-2b553b22f898"
 
 [compat]
+JuMP = "1"
+MathOptInterface = "1"
+Distances = "0.10"
 julia = "1.6"
 Metaheuristics = "3.2"

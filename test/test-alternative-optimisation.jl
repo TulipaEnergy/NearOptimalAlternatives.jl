@@ -12,7 +12,12 @@
     x_1_res = value(x_1)
     x_2_res = value(x_2)
 
-    MGA.create_alternative_generating_problem!(model, 0.1, SqEuclidean(), VariableRef[])
+    NearOptimalAlternatives.create_alternative_generating_problem!(
+      model,
+      0.1,
+      SqEuclidean(),
+      VariableRef[],
+    )
     # Test that the correct alternative problem is created and that `x_2` is fixed.
     @test objective_sense(model) == MAX_SENSE &&
           constraint_object(model[:original_objective]).set ==
@@ -32,7 +37,12 @@
     x_1_res = value(x_1)
     x_2_res = value(x_2)
 
-    MGA.create_alternative_generating_problem!(model, 0.1, SqEuclidean(), VariableRef[])
+    NearOptimalAlternatives.create_alternative_generating_problem!(
+      model,
+      0.1,
+      SqEuclidean(),
+      VariableRef[],
+    )
     # Test that the correct alternative problem is created.
     @test objective_sense(model) == MAX_SENSE &&
           objective_function(model) == QuadExpr(
@@ -58,7 +68,7 @@
     x_1_res = value(x_1)
     x_2_res = value(x_2)
 
-    MGA.create_alternative_generating_problem!(model, 0.1, SqEuclidean(), [x_2])
+    NearOptimalAlternatives.create_alternative_generating_problem!(model, 0.1, SqEuclidean(), [x_2])
     # Test that the correct alternative problem is created and that `x_2` is fixed.
     @test objective_sense(model) == MAX_SENSE &&
           objective_function(model) == QuadExpr(
@@ -87,7 +97,7 @@ end
   x_1_res = value(x_1)
   x_2_res = value(x_2)
 
-  MGA.add_solution!(model, SqEuclidean())
+  NearOptimalAlternatives.add_solution!(model, SqEuclidean())
   # Test that the correct alternative problem is created and that `x_2` is fixed.
   @test objective_sense(model) == MAX_SENSE &&
         objective_function(model) == QuadExpr(

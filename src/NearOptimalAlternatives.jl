@@ -1,4 +1,4 @@
-module MGA
+module NearOptimalAlternatives
 
 # Packages
 
