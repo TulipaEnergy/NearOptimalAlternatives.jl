@@ -278,8 +278,13 @@ end
 
     algorithm = Metaheuristics.PSO(N = 100, C1 = 2.0, C2 = 2.0, ω = 0.8)
 
-    results =
-      MGA.generate_alternatives(model, 0.1, 1, algorithm, metric = WeightedSqEuclidean([0.5, 10]))
+    results = NearOptimalAlternatives.generate_alternatives(
+      model,
+      0.1,
+      1,
+      algorithm,
+      metric = WeightedSqEuclidean([0.5, 10]),
+    )
     results = NearOptimalAlternatives.generate_alternatives!(
       model,
       0.1,

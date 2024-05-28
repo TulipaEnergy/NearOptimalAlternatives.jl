@@ -93,7 +93,7 @@ function generate_alternatives(
 
   result = AlternativeSolutions([], [])
 
-  @info "Setting up MGA problem and solver."
+  @info "Setting up NearOptimalAlternatives problem and solver."
   # Obtain the solution values for all variables, separated in fixed and non-fixed variables.
   initial_solution = OrderedDict{VariableRef, Float64}()
   fixed_variable_solutions = Dict{MOI.VariableIndex, Float64}()
@@ -113,15 +113,15 @@ function generate_alternatives(
     metric,
     fixed_variable_solutions,
   )
-  @info "Solving MGA problem."
+  @info "Solving NearOptimalAlternatives problem."
   state = run_alternative_generating_problem!(problem)
   @info "Solution #1/$n_alternatives found." state minimizer(state)
   update_solutions!(result, state, initial_solution, fixed_variable_solutions, model)
 
   for i = 2:n_alternatives
-    @info "Reconfiguring MGA problem with new solution."
+    @info "Reconfiguring NearOptimalAlternatives problem with new solution."
     add_solution!(problem, state, metric)
-    @info "Solving MGA problem."
+    @info "Solving NearOptimalAlternatives problem."
     state = run_alternative_generating_problem!(problem)
     @info "Solution #$i/$n_alternatives found." state minimizer(state)
     update_solutions!(result, state, initial_solution, fixed_variable_solutions, model)

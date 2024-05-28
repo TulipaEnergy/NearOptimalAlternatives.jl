@@ -13,7 +13,7 @@
     index_map[1] = 1
     index_map[2] = 2
     # Result should be x_1 - 2 * x_2, which is equal to -3.0 for x_1 = 1.0 and x_2 = 2.0.
-    @test MGA.extract_constraint(
+    @test NearOptimalAlternatives.extract_constraint(
       MOI.get(model, MOI.ConstraintFunction(), constraint),
       [1.0, 2.0],
       index_map,
@@ -36,7 +36,7 @@
     fixed_variables = Dict{MOI.VariableIndex, Float64}()
     fixed_variables[x_2.index] = 2.0
     # Result should be x_1 - 2 * x_2, which is equal to -3.0 for x_1 = 1.0 and x_2 = 2.0.
-    @test MGA.extract_constraint(
+    @test NearOptimalAlternatives.extract_constraint(
       MOI.get(model, MOI.ConstraintFunction(), constraint),
       [1.0],
       index_map,
@@ -60,7 +60,7 @@ end
     index_map[1] = 1
     index_map[2] = 2
     # Result should be x_1 + x_2, which is equal to 3.0 for x_1 = 1.0 and x_2 = 2.0.
-    @test MGA.extract_objective(
+    @test NearOptimalAlternatives.extract_objective(
       objective,
       [1.0, 2.0],
       index_map,
@@ -82,7 +82,12 @@ end
     fixed_variables = Dict{MOI.VariableIndex, Float64}()
     fixed_variables[x_2.index] = 2.0
     # Result should be x_1 + x_2, which is equal to 3.0 for x_1 = 1.0 and x_2 = 2.0.
-    @test MGA.extract_objective(objective, [1.0, 2.0], index_map, fixed_variables) == 3.0
+    @test NearOptimalAlternatives.extract_objective(
+      objective,
+      [1.0, 2.0],
+      index_map,
+      fixed_variables,
+    ) == 3.0
   end
 end
 
@@ -99,7 +104,7 @@ end
     result = zeros(Float64, (2, 1))
     result[1, 1] = -Inf
     result[2, 1] = 1
-    @test MGA.extract_bounds(model, index_map) == result
+    @test NearOptimalAlternatives.extract_bounds(model, index_map) == result
   end
   @testset "Test greater than bounds" begin
     # Initialise model
@@ -113,7 +118,7 @@ end
     result = zeros(Float64, (2, 1))
     result[1, 1] = 1
     result[2, 1] = Inf
-    @test MGA.extract_bounds(model, index_map) == result
+    @test NearOptimalAlternatives.extract_bounds(model, index_map) == result
   end
   @testset "Test interval bounds" begin
     # Initialise model
@@ -127,7 +132,7 @@ end
     result = zeros(Float64, (2, 1))
     result[1, 1] = 0
     result[2, 1] = 1
-    @test MGA.extract_bounds(model, index_map) == result
+    @test NearOptimalAlternatives.extract_bounds(model, index_map) == result
   end
 end
 
@@ -151,7 +156,7 @@ end
     index_map[2] = 2
     index_map[3] = 3
     # Run function and test results. We cannot test function equality so we evaluate the functions in two points and compare.
-    f = MGA.create_objective(
+    f = NearOptimalAlternatives.create_objective(
       model,
       solution,
       0.5,
@@ -194,7 +199,7 @@ end
     index_map[1] = 1
     index_map[2] = 2
     # Run function and test results. We cannot test function equality so we evaluate the functions in two points and compare.
-    f = MGA.create_objective(
+    f = NearOptimalAlternatives.create_objective(
       model,
       solution,
       0.5,
@@ -237,7 +242,7 @@ end
   algorithm = Metaheuristics.PSO(N = 100, C1 = 2.0, C2 = 2.0, ω = 0.8)
   metric = Distances.SqEuclidean()
 
-  problem = MGA.create_alternative_generating_problem(
+  problem = NearOptimalAlternatives.create_alternative_generating_problem(
     model,
     algorithm,
     solution,
@@ -271,7 +276,7 @@ end
   algorithm = Metaheuristics.PSO(N = 100, C1 = 2.0, C2 = 2.0, ω = 0.8)
   metric = Distances.SqEuclidean()
 
-  problem = MGA.create_alternative_generating_problem(
+  problem = NearOptimalAlternatives.create_alternative_generating_problem(
     model,
     algorithm,
     solution,
@@ -279,7 +284,7 @@ end
     metric,
     Dict{MOI.VariableIndex, Float64}(),
   )
-  result = MGA.run_alternative_generating_problem!(problem)
+  result = NearOptimalAlternatives.run_alternative_generating_problem!(problem)
   solution = minimizer(result)
 
   @test solution[1] ≥ 0 && solution[1] ≤ 1 && solution[2] ≥ 0 && solution[2] ≤ 1
@@ -303,7 +308,7 @@ end
   algorithm = Metaheuristics.PSO(N = 100, C1 = 2.0, C2 = 2.0, ω = 0.8)
   metric = Distances.SqEuclidean()
 
-  problem = MGA.create_alternative_generating_problem(
+  problem = NearOptimalAlternatives.create_alternative_generating_problem(
     model,
     algorithm,
     solution,
@@ -311,9 +316,9 @@ end
     metric,
     Dict{MOI.VariableIndex, Float64}(),
   )
-  result = MGA.run_alternative_generating_problem!(problem)
+  result = NearOptimalAlternatives.run_alternative_generating_problem!(problem)
   sol = minimizer(result)
-  MGA.add_solution!(problem, result, metric)
+  NearOptimalAlternatives.add_solution!(problem, result, metric)
   f0, g0, h0 = problem.objective([0.0, 0.0])
 
   @test problem.algorithm == algorithm &&
