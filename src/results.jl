@@ -74,3 +74,51 @@ function update_solutions!(
     extract_objective(JuMP.objective_function(model), best_solution, index_map, fixed_variables)
   push!(results.objective_values, objective_value)
 end
+
+"""
+    update_solutions!(results::AlternativeSolutions, model::JuMP.Model)
+
+Update the set of results `AlternativeSolutions` with the variable values obtained when solving using PSOGA.
+
+# Arguments
+- `results::AlternativeSolutions`: set of solutions to add a new solution to.
+- `state::Metaheuristics.State`: contains results to metaheuristic solve.
+- `subBest::Vector{Any}`: contains the best results per subpopulation of PSOGA, which are the actual results of solving.
+- `initial:solution::OrderedDict{VariableRef, Float64}`: used to identify the indices of the metaheuristic solution in the JuMP model.
+- `fixed_variables::Dict{MOI.VariableIndex, Float64}`: set of fixed variables and their solution values.
+- `model::JuMP.Model`: original model for which alternative solutions are found.
+"""
+function update_solutions!(
+  results::AlternativeSolutions,
+  state::Metaheuristics.State,
+  subBest::Vector{Any},
+  initial_solution::OrderedDict{VariableRef, Float64},
+  fixed_variables::Dict{MOI.VariableIndex, Float64},
+  model::JuMP.Model,
+)
+  if !state.stop
+    throw(ErrorException("Metaheuristic state `state` not terminated when trying to read results."))
+  end
+
+  # Loop over the best solutions of each subpopulation.
+  for best_solution in subBest
+    solution = Dict{VariableRef, Float64}()
+    index_map = Dict{Int64, Int64}()
+    # Add all new results
+    for (i, (k, _)) in enumerate(initial_solution)
+      solution[k] = best_solution.x[i]
+      index_map[k.index.value] = i
+    end
+    # Add values of fixed variables.
+    for (k, v) in fixed_variables
+      solution[JuMP.VariableRef(model, k)] = v
+    end
+
+    push!(results.solutions, solution)
+
+    # Retrieve objective value to original problem.
+    objective_value =
+      extract_objective(JuMP.objective_function(model), best_solution.x, index_map, fixed_variables)
+    push!(results.objective_values, objective_value)
+  end
+end

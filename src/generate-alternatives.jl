@@ -116,15 +116,30 @@ function generate_alternatives(
   @info "Solving NearOptimalAlternatives problem."
   state = run_alternative_generating_problem!(problem)
   @info "Solution #1/$n_alternatives found." state minimizer(state)
-  update_solutions!(result, state, initial_solution, fixed_variable_solutions, model)
-
-  for i = 2:n_alternatives
-    @info "Reconfiguring NearOptimalAlternatives problem with new solution."
-    add_solution!(problem, state, metric)
-    @info "Solving NearOptimalAlternatives problem."
-    state = run_alternative_generating_problem!(problem)
-    @info "Solution #$i/$n_alternatives found." state minimizer(state)
+  # Update the solutions based on whether PSOGA is used or not
+  if typeof(metaheuristic_algorithm) == Metaheuristics.Algorithm{NearOptimalAlternatives.PSOGA}
+    update_solutions!(
+      result,
+      state,
+      metaheuristic_algorithm.parameters.subBest,
+      initial_solution,
+      fixed_variable_solutions,
+      model,
+    )
+  else
     update_solutions!(result, state, initial_solution, fixed_variable_solutions, model)
+  end
+
+  # Only run iteratively if PSOGA is not used.
+  if typeof(metaheuristic_algorithm) != Metaheuristics.Algorithm{NearOptimalAlternatives.PSOGA}
+    for i = 2:n_alternatives
+      @info "Reconfiguring NearOptimalAlternatives problem with new solution."
+      add_solution!(problem, state, metric)
+      @info "Solving NearOptimalAlternatives problem."
+      state = run_alternative_generating_problem!(problem)
+      @info "Solution #$i/$n_alternatives found." state minimizer(state)
+      update_solutions!(result, state, initial_solution, fixed_variable_solutions, model)
+    end
   end
 
   return result
