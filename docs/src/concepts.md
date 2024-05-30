@@ -46,4 +46,5 @@ When comparing two solutions to decide which is better, we therefore take the fo
 The algorithm terminates when the subpopulations have converged, or the maximum number of iterations has been met. By then, the subpopulations should be spread out over the feasible space and as far as possible from the initial optimal solution.
 
 [^1]: E. D. Brill Jr, S.-Y. Chang, and L. D. Hopkins, “Modeling to generate alternatives: The hsj approach and an illustration using a problem in land use planning,” Management Science, vol. 28, no. 3, pp. 221–235, 1982.
+
 [^2]: E. M. Zechman and S. R. Ranjithan, “An evolutionary algorithm to generate alternatives (eaga) for engineering optimization problems,” Engineering Optimization, vol. 36, no. 5, pp. 539–553, 2004.
