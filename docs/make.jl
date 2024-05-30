@@ -22,6 +22,9 @@ makedocs(;
   ),
   pages = [
     "Home" => "index.md",
+    "How to Use" => "how-to-use.md",
+    "Tutorials" => "tutorials.md",
+    "Conecpts" => "concepts.md",
     "Contributing" => "contributing.md",
     "Dev setup" => "developer.md",
     "Reference" => "reference.md",
