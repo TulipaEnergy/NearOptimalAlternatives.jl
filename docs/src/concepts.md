@@ -11,6 +11,8 @@ Here we explain in more detail the underlying theoretical concepts of NearOptima
 
 Modelling-to-generate-alternatives (MGA) is a technique to find alternative solutions to an optimisation problem that are as different as possible from the optimal solution, introduced by Brill Jr et al. [^brill]. Their approach consists of a Hop-Skip-Jump MGA method and works as follows. First, an initial solution is found using any optimisation method. Next, an amount of slack specified by the user is added to the objective function. Then, this objective function is encoded as a constraint and a new objective function that minimises the weighted sum of decision variables that appeared in previous solutions. This process is iterated as long as changes in the solutions are visible.
 
+[^brill]: E. D. Brill Jr, S.-Y. Chang, and L. D. Hopkins, “Modeling to generate alternatives: The hsj approach and an illustration using a problem in land use planning,” Management Science, vol. 28, no. 3, pp. 221–235, 1982.
+
 For problems with non-binary variables the corresponding MGA problem can be formulated as follows. Given the optimal solution $x^*$ to an optimisation problem with constraints $Ax \leq b, x \geq 0$ and objective $c^{\top}x$, we solve the following problem
 
 $$
@@ -26,6 +28,8 @@ where $\epsilon$ is the objective gap which specifies the maximum difference bet
 ## Evolutionary Algorithms for Generating Alternatives (EAGA)
 
 Evolutionary algorithms have been proposed as an alternative method to mathematical programming for generating alternative solutions by Zechman and Ranjithan [^zechman].
+
+[^zechman]: E. M. Zechman and S. R. Ranjithan, “An evolutionary algorithm to generate alternatives (eaga) for engineering optimization problems,” Engineering Optimization, vol. 36, no. 5, pp. 539–553, 2004.
 
 Their method works as follows. Instead of simply initialising an initial population as a regular evolutionary algorithm would do, they divide this population into $P$ subpopulations, where $P$ is equal to the number of alternative solutions to be found. Each subpopulation is dedicated to search for one alternative solution. The first subpopulation can also be used to find the global optimum. After initialising the population, they take the following steps iteratively. First, evaluate all individuals with respect to the objective and feasibility. Also, the distance between this solution and other subpopulations, or there centroids, is taken into account. So, the best individual is a feasible solution which is furthest away from other subpopulations. They used elitism to preserve the best solution in each subpopulation. Afterwards, after checking stopping criteria, they applied binary tournament selection based on the fitness of the solution to select the rest of the individuals.
 
@@ -44,7 +48,3 @@ After updating the velocity of each individual, all positions are updated using 
 When comparing two solutions to decide which is better, we therefore take the following approach. If either of the solutions is infeasible, we take the solution with the smallest constraint violation. If none are infeasible we pick the one with the largest distance, where the distance can be defined in two ways. Either, we calculate the sum of all distances to other subpopulations and to the original optimal solution, or we calculate the minimum of the distances to other subpopulations and the original optimal solution. To compute the distance to other subpopulations, we calculate the centroid (average) of all points in the subpopulation and compute the distance to that centroid.
 
 The algorithm terminates when the subpopulations have converged, or the maximum number of iterations has been met. By then, the subpopulations should be spread out over the feasible space and as far as possible from the initial optimal solution.
-
-[^brill]: E. D. Brill Jr, S.-Y. Chang, and L. D. Hopkins, “Modeling to generate alternatives: The hsj approach and an illustration using a problem in land use planning,” Management Science, vol. 28, no. 3, pp. 221–235, 1982.
-
-[^zechman]: E. M. Zechman and S. R. Ranjithan, “An evolutionary algorithm to generate alternatives (eaga) for engineering optimization problems,” Engineering Optimization, vol. 36, no. 5, pp. 539–553, 2004.
