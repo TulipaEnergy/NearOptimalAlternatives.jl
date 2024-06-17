@@ -118,7 +118,7 @@ function create_objective(
   function f(x)
     # Objective function for metaheuristic (= distance between individual x and solution values of original LP). Solution_values does not contain fixed_variables, these are not required in objective as the distance for these variables is zero.
     fx = [-Distances.evaluate(metric, x, solution_values)]
-    # Initialise set of inequality constraints and add objective gap constraint.
+    # Initialise set of inequality constraints.
     gx = Vector{Float64}(undef, 0)
     # Add objective gap constraint depending on whether original LP is maximised or minimised.
     if JuMP.objective_sense(model) == JuMP.MAX_SENSE
