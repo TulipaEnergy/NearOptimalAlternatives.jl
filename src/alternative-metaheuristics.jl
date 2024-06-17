@@ -186,7 +186,7 @@ function create_objective(
     if isempty(gx)
       push!(gx, 0.0)
     end
-    
+
     if isempty(hx)
       push!(hx, 0.0)
     end
