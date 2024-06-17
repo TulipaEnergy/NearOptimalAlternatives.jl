@@ -107,7 +107,7 @@ function create_objective(
 )
   original_objective = JuMP.objective_function(model)
   solution_values = collect(Float64, values(solution))
-  # Compute objective value or original LP.
+  # Compute objective value of original LP.
   original_objective_value =
     extract_objective(original_objective, solution_values, index_map, fixed_variables)
   # Obtain all constraints from model (including variable bounds).
