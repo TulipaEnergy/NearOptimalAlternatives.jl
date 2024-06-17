@@ -167,7 +167,7 @@ end
     f0, g0, h0 = f([0.0, 0.0, 0.0])
     f1, g1, h1 = f([1.0, 1.0, 1.0])
     @test f0 == [-2.0] &&         # -1 * ((x_1 - 1)^2 + (x_2 - 0)^2 + (x_3 - 1)^2) = -(1 + 0 + 1) = -2
-          f1 == [-1.0] &&         # -1 * ((x_1 - 1)^2 + (x_2 - 0)^2 + (x_3 - 1)^2) = (0 + 1 + 0) = -1
+          f1 == [-1.0] &&         # -1 * ((x_1 - 1)^2 + (x_2 - 0)^2 + (x_3 - 1)^2) = -(0 + 1 + 0) = -1
           length(g0) == 5 &&      # Objective gap constraint + 4 variable bounds
           g0[1] == 1.0 &&         # x_1 - x_2 + x_3 >= 1.0 (1.0 <= 0)
           count(i -> (i == 0.0), g0) == 2 && # Constraints except objective gap constraint can be in arbitrary order, so we count the occurences per value.
