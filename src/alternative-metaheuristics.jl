@@ -182,7 +182,11 @@ function create_objective(
       end
     end
 
-    # hx should contain 0.0 if no equality constraints extract_constraint
+    # gx and hx should contain 0.0 if no inequality constraints or equality constraints are in the original problem.
+    if isempty(gx)
+      push!(gx, 0.0)
+    end
+    
     if isempty(hx)
       push!(hx, 0.0)
     end
