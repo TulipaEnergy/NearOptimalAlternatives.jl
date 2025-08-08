@@ -15,8 +15,9 @@
     NearOptimalAlternatives.create_alternative_generating_problem!(
       model,
       0.1,
-      SqEuclidean(),
       VariableRef[],
+      all_variables(model);
+      metric = SqEuclidean(),
     )
     # Test that the correct alternative problem is created and that `x_2` is fixed.
     @test objective_sense(model) == MAX_SENSE &&
@@ -40,8 +41,9 @@
     NearOptimalAlternatives.create_alternative_generating_problem!(
       model,
       0.1,
-      SqEuclidean(),
       VariableRef[],
+      all_variables(model);
+      metric = SqEuclidean(),
     )
     # Test that the correct alternative problem is created.
     @test objective_sense(model) == MAX_SENSE &&
@@ -68,7 +70,13 @@
     x_1_res = value(x_1)
     x_2_res = value(x_2)
 
-    NearOptimalAlternatives.create_alternative_generating_problem!(model, 0.1, SqEuclidean(), [x_2])
+    NearOptimalAlternatives.create_alternative_generating_problem!(
+      model,
+      0.1,
+      [x_2],
+      all_variables(model);
+      metric = SqEuclidean(),
+    )
     # Test that the correct alternative problem is created and that `x_2` is fixed.
     @test objective_sense(model) == MAX_SENSE &&
           objective_function(model) == QuadExpr(
@@ -97,7 +105,7 @@ end
   x_1_res = value(x_1)
   x_2_res = value(x_2)
 
-  NearOptimalAlternatives.add_solution!(model, SqEuclidean())
+  NearOptimalAlternatives.update_objective_function!(model, all_variables(model); metric = SqEuclidean())
   # Test that the correct alternative problem is created and that `x_2` is fixed.
   @test objective_sense(model) == MAX_SENSE &&
         objective_function(model) == QuadExpr(
