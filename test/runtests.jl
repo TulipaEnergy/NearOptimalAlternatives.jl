@@ -13,3 +13,10 @@ for file in readdir(@__DIR__)
   end
   include(file)
 end
+
+for file in readdir(joinpath(@__DIR__, "tests-MGA-Methods/"))
+  if !startswith("test-")(file)
+    continue
+  end
+  include(joinpath("tests-MGA-Methods", file))
+end
