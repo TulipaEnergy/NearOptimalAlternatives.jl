@@ -8,9 +8,14 @@ using MathOptInterface
 using Metaheuristics
 using DataStructures
 
+include("MGA-Methods/Max-distance.jl")
+include("MGA-Methods/Min-Max-Variables.jl")
+
 include("results.jl")
 include("alternative-optimisation.jl")
 include("generate-alternatives.jl")
 include("alternative-metaheuristics.jl")
+
+
 
 end
