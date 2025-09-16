@@ -1,30 +1,36 @@
 export generate_alternatives!, generate_alternatives
 
 """
-    result = generate_alternatives!(
-      model::JuMP.Model,
-      optimality_gap::Float64,
-      n_alternatives::Int64;
-      metric::Distances.Metric = SqEuclidean(),
-      selected_variables::Vector{VariableRef} = []
-    )
-
+results = generate_alternatives!(
+  model::JuMP.Model,
+  optimality_gap::Float64,
+  variables::AbstractArray{T,N},
+  n_alternatives::Int64;
+  modeling_method::Symbol = :Max_Distance,
+  metric::Distances.SemiMetric = SqEuclidean(),
+  fixed_variables::Vector{VariableRef} = VariableRef[],
+) where {T<:Union{VariableRef,AffExpr},N}
 Generate `n_alternatives` solutions to `model` which are as distant from the optimum and each other, but with a maximum `optimality_gap`, using optimisation.
 
 # Arguments
 - `model::JuMP.Model`: a solved JuMP model for which alternatives are generated.
 - `optimality_gap::Float64`: the maximum percentage deviation (>=0) an alternative may have compared to the optimal solution.
+-  variables::AbstractArray{T,N}: the variables of `model` for which are considered when generating alternatives.
 - `n_alternatives`: the number of alternative solutions sought.
+- `modeling_method::Symbol = :Max_Distance`: the method used to model the problem for generating alternatives.
 - `metric::Distances.Metric=SqEuclidean()`: the metric used to maximise the difference between alternatives and the optimal solution.
 - `fixed_variables::Vector{VariableRef}=[]`: a subset of all variables of `model` that are not allowed to be changed when seeking for alternatives.
 """
 function generate_alternatives!(
   model::JuMP.Model,
   optimality_gap::Float64,
+  variables::AbstractArray{T, N},
   n_alternatives::Int64;
+  weights = zeros(length(variables)),
+  modeling_method::Symbol = :Max_Distance,
   metric::Distances.SemiMetric = SqEuclidean(),
   fixed_variables::Vector{VariableRef} = VariableRef[],
-)
+) where {T <: Union{VariableRef, AffExpr}, N}
   if !is_solved_and_feasible(model)
     throw(ArgumentError("JuMP model has not been solved."))
   elseif optimality_gap < 0
@@ -33,10 +39,18 @@ function generate_alternatives!(
     throw(ArgumentError("Number of alternatives (= $n_alternatives) should be at least 1."))
   end
 
-  result = AlternativeSolutions([], [])
+  result = AlternativeSolutions([], []) # Initialize the result container for storing alternative solutions.
 
   @info "Creating model for generating alternatives."
-  create_alternative_generating_problem!(model, optimality_gap, metric, fixed_variables)
+  create_alternative_generating_problem!(
+    model,
+    optimality_gap,
+    fixed_variables,
+    variables;
+    weights = weights,
+    modeling_method = modeling_method,
+    metric = metric,
+  )
   @info "Solving model."
   JuMP.optimize!(model)
   @info "Solution #1/$n_alternatives found." solution_summary(model)
@@ -45,7 +59,12 @@ function generate_alternatives!(
   # If n_solutions > 1, we repeat the solving process to generate multiple solutions.
   for i = 2:n_alternatives
     @info "Reconfiguring model for generating alternatives."
-    add_solution!(model, metric)
+    update_objective_function!(
+      model,
+      variables;
+      weights = weights,
+      modeling_method = modeling_method,
+    )
     @info "Solving model."
     JuMP.optimize!(model)
     @info "Solution #$i/$n_alternatives found." solution_summary(model)
