@@ -6,7 +6,7 @@ exclude = [
   "^https://TulipaEnergy.github.io/NearOptimalAlternatives.jl/stable$",
   "zenodo.org/badge/DOI/FIXME$",
   "https://blog.esciencecenter.nl/the-utopic-git-history-d44b81c09593",
-  "https://tulipaEnergy.github.io/NearOptimalAlternatives.jl/stable",
+  "https://tulipaenergy.github.io/NearOptimalAlternatives.jl/stable",
 ]
 
 exclude_path = [
