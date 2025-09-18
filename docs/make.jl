@@ -1,31 +1,21 @@
 using NearOptimalAlternatives
 using Documenter
 
-DocMeta.setdocmeta!(
-  NearOptimalAlternatives,
-  :DocTestSetup,
-  :(using NearOptimalAlternatives);
-  recursive = true,
-)
+DocMeta.setdocmeta!(NearOptimalAlternatives, :DocTestSetup, :(using NearOptimalAlternatives); recursive = true)
+
+const page_rename = Dict("developer.md" => "Developer docs") # Without the numbers
+const numbered_pages = [
+    file for file in readdir(joinpath(@__DIR__, "src")) if
+    file != "index.md" && splitext(file)[2] == ".md"
+]
 
 makedocs(;
-  modules = [NearOptimalAlternatives],
-  doctest = true,
-  linkcheck = true,
-  authors = "Matthijs Arnoldus <m.arnoldus-1@tudelft.nl> and contributors",
-  repo = "https://github.com/TulipaEnergy/NearOptimalAlternatives.jl/blob/{commit}{path}#{line}",
-  sitename = "NearOptimalAlternatives.jl",
-  format = Documenter.HTML(;
-    prettyurls = get(ENV, "CI", "false") == "true",
-    canonical = "https://TulipaEnergy.github.io/NearOptimalAlternatives.jl",
-    assets = ["assets/style.css"],
-  ),
-  pages = [
-    "Home" => "index.md",
-    "Contributing" => "contributing.md",
-    "Dev setup" => "developer.md",
-    "Reference" => "reference.md",
-  ],
+    modules = [NearOptimalAlternatives],
+    authors = "",
+    repo = "https://github.com/TulipaEnergy/NearOptimalAlternatives.jl/blob/{commit}{path}#{line}",
+    sitename = "NearOptimalAlternatives.jl",
+    format = Documenter.HTML(; canonical = "https://TulipaEnergy.github.io/NearOptimalAlternatives.jl"),
+    pages = ["index.md"; numbered_pages],
 )
 
-deploydocs(; repo = "github.com/TulipaEnergy/NearOptimalAlternatives.jl", push_preview = true)
+deploydocs(; repo = "github.com/TulipaEnergy/NearOptimalAlternatives.jl")

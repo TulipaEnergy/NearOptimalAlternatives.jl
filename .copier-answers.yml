@@ -1,14 +1,13 @@
 # Changes here will be overwritten by Copier
-AddMacToCI: true
-AddWinToCI: true
-AuthorEmail: m.arnoldus-1@tudelft.nl
-AuthorName: Matthijs Arnoldus
+Authors: ''
 JuliaMinVersion: '1.6'
 License: Apache-2.0
+LicenseCopyrightHolders: Authors
 PackageName: NearOptimalAlternatives
 PackageOwner: TulipaEnergy
 PackageUUID: a88418a5-8dc5-4f1c-8a3e-d5a75ec49c70
-RunJuliaNightlyOnCI: false
-UseCirrusCI: false
-_commit: v0.2.5
+StrategyConfirmIncluded: false
+StrategyLevel: 3
+StrategyReviewExcluded: false
+_commit: v0.16.2
 _src_path: https://github.com/JuliaBesties/BestieTemplate.jl
