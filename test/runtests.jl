@@ -1,5 +1,11 @@
 using NearOptimalAlternatives
 using Test
+using Ipopt
+using JuMP
+using Distances
+using MathOptInterface
+using Metaheuristics
+using DataStructures
 
 #=
 Don't add your tests to runtests.jl. Instead, create files named
