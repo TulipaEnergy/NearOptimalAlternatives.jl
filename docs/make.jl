@@ -1,7 +1,12 @@
 using NearOptimalAlternatives
 using Documenter
 
-DocMeta.setdocmeta!(NearOptimalAlternatives, :DocTestSetup, :(using NearOptimalAlternatives); recursive = true)
+DocMeta.setdocmeta!(
+    NearOptimalAlternatives,
+    :DocTestSetup,
+    :(using NearOptimalAlternatives);
+    recursive = true,
+)
 
 const page_rename = Dict("developer.md" => "Developer docs") # Without the numbers
 const numbered_pages = [
@@ -14,7 +19,9 @@ makedocs(;
     authors = "",
     repo = "https://github.com/TulipaEnergy/NearOptimalAlternatives.jl/blob/{commit}{path}#{line}",
     sitename = "NearOptimalAlternatives.jl",
-    format = Documenter.HTML(; canonical = "https://TulipaEnergy.github.io/NearOptimalAlternatives.jl"),
+    format = Documenter.HTML(;
+        canonical = "https://TulipaEnergy.github.io/NearOptimalAlternatives.jl",
+    ),
     pages = ["index.md"; numbered_pages],
 )
 
