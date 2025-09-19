@@ -11,8 +11,9 @@ MathOptInterface = "b8f27783-ece8-5eb3-8dc8-9495eed66fee"
 Metaheuristics = "bcdb8e00-2c21-11e9-3065-2b553b22f898"
 
 [compat]
+DataStructures = "0.19"
+Distances = "0.10"
 JuMP = "1"
 MathOptInterface = "1"
-Distances = "0.10"
-julia = "1.7"
 Metaheuristics = "3.3"
+julia = "1.7"
