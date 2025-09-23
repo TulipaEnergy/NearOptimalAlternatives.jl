@@ -17,7 +17,7 @@ If you use NearOptimalAlternatives.jl in your work, please cite using the refere
 
 ## Contributing
 
-If you want to make contributions of any kind, please first that a look into our [contributing guide directly on GitHub](docs/src/90-contributing.md) or the [contributing page on the website](https://TulipaEnergy.github.io/NearOptimalAlternatives.jl/dev/contributing/)
+If you want to make contributions of any kind, please first that a look into our [contributing guide directly on GitHub](docs/src/90-contributing.md) or the [contributing page on the website](https://TulipaEnergy.github.io/NearOptimalAlternatives.jl/dev/90-contributing/)
 
 ---
 
