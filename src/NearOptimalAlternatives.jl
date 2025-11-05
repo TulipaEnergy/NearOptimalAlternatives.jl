@@ -13,6 +13,7 @@ include("MGA-Methods/HSJ.jl")
 include("MGA-Methods/Spores.jl")
 include("MGA-Methods/Min-Max-Variables.jl")
 include("MGA-Methods/Random-Vector.jl")
+include("MGA-Methods/Directionally-Weighted-Variables.jl")
 
 include("results.jl")
 include("alternative-optimisation.jl")

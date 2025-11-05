@@ -9,7 +9,7 @@ const METHOD_DISPATCH_UPDATE = Dict{Symbol,Function}(
     :Spores => Spores_update!,
     :Min_Max_Variables => Min_Max_Variables_update!,
     :Random_Vector => Random_Vector_update!,
-    # :Directionally_Weighted_Variables => DW_update!,
+    :Directionally_Weighted_Variables => DWV_update!,
     :Max_Distance => Dist_update!,
 )
 
@@ -19,7 +19,7 @@ const METHOD_DISPATCH_INITIAL = Dict{Symbol,Function}(
     :Spores => Spores_initial!,
     :Min_Max_Variables => Min_Max_Variables_initial!,
     :Random_Vector => Random_Vector_initial!,
-    # :Directionally_Weighted_Variables => DW_update!,
+    :Directionally_Weighted_Variables => DWV_initial!,
     :Max_Distance => Dist_initial!,
 )
 
