@@ -91,6 +91,25 @@
               MOI.GreaterThan(0.9 * (x_1_res + x_2_res)) &&
               is_fixed(x_2)
     end
+
+    @testset "Test unsupported modeling method" begin
+        optimizer = Ipopt.Optimizer
+        model = JuMP.Model(optimizer)
+
+        @variable(model, 0 ≤ x_1 ≤ 1)
+        @variable(model, 0 ≤ x_2 ≤ 1)
+        @objective(model, Max, x_1 + x_2)
+        JuMP.optimize!(model)
+
+        @test_throws ArgumentError NearOptimalAlternatives.create_alternative_generating_problem!(
+            model,
+            0.1,
+            VariableRef[],
+            all_variables(model);
+            modeling_method = :Unsupported_Method,
+            metric = SqEuclidean(),
+        )
+    end
 end
 
 @testset "Test adding a solution to a model with an alternative found." begin
@@ -126,4 +145,21 @@ end
           constraint_object(model[:original_objective]).func ==
           AffExpr(0, x_1 => 1, x_2 => 1) &&
           constraint_object(model[:original_objective]).set == MOI.GreaterThan(1.8)
+end
+
+@testset "Test update with unsupported modeling method" begin
+    optimizer = Ipopt.Optimizer
+    model = JuMP.Model(optimizer)
+
+    @variable(model, 0 ≤ x_1 ≤ 1)
+    @variable(model, 0 ≤ x_2 ≤ 1)
+    @objective(model, Max, x_1 + x_2)
+    JuMP.optimize!(model)
+
+    @test_throws ArgumentError NearOptimalAlternatives.update_objective_function!(
+        model,
+        all_variables(model);
+        modeling_method = :Unsupported_Method,
+        metric = SqEuclidean(),
+    )
 end
