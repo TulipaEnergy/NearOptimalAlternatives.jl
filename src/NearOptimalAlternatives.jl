@@ -16,7 +16,7 @@ include("MGA-Methods/Random-Vector.jl")
 include("MGA-Methods/Directionally-Weighted-Variables.jl")
 
 include("results.jl")
-include("alternative-optimisation.jl")
+include("alternative-optimization.jl")
 include("generate-alternatives.jl")
 include("alternative-metaheuristics.jl")
 
