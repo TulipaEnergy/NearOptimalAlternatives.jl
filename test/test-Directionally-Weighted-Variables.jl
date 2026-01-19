@@ -94,6 +94,7 @@
 
         # Test that `results` contains 2 solutions with two variables each, where the objective values of both solutions are between 1.8 and 2.0.
         @test length(results.solutions) == 2 &&
+              length(results.solutions[1]) == 2 &&
               length(results.solutions[2]) == 2 &&
               length(results.objective_values) == 2 &&
               (
