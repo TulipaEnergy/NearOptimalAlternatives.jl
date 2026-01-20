@@ -1,6 +1,6 @@
 @testset "Test constraint extraction" begin
     @testset "Test that regular constraint is converted correctly" begin
-        # Initialise model
+        # initialize model
         optimizer = Ipopt.Optimizer
         model = JuMP.Model(optimizer)
         @variable(model, 0 ≤ x_1 ≤ 1)
@@ -23,7 +23,7 @@
     end
 
     @testset "Test that constraint with fixed variable is converted correctly" begin
-        # Initialise model
+        # initialize model
         optimizer = Ipopt.Optimizer
         model = JuMP.Model(optimizer)
         @variable(model, 0 ≤ x_1 ≤ 1)
@@ -49,7 +49,7 @@ end
 
 @testset "Test objective extraction" begin
     @testset "Test that regular objective is converted correctly" begin
-        # Initialise model
+        # initialize model
         optimizer = Ipopt.Optimizer
         model = JuMP.Model(optimizer)
         @variable(model, 0 ≤ x_1 ≤ 1)
@@ -71,7 +71,7 @@ end
     end
 
     @testset "Test that objective with fixed variable is converted correctly" begin
-        # Initialise model
+        # initialize model
         optimizer = Ipopt.Optimizer
         model = JuMP.Model(optimizer)
         @variable(model, 0 ≤ x_1 ≤ 1)
@@ -95,7 +95,7 @@ end
 
 @testset "Test bound extraction" begin
     @testset "Test less than bounds" begin
-        # Initialise model
+        # initialize model
         optimizer = Ipopt.Optimizer
         model = JuMP.Model(optimizer)
         @variable(model, x_1 ≤ 1)
@@ -109,7 +109,7 @@ end
         @test NearOptimalAlternatives.extract_bounds(model, index_map) == result
     end
     @testset "Test greater than bounds" begin
-        # Initialise model
+        # initialize model
         optimizer = Ipopt.Optimizer
         model = JuMP.Model(optimizer)
         @variable(model, x_1 ≥ 1)
@@ -123,7 +123,7 @@ end
         @test NearOptimalAlternatives.extract_bounds(model, index_map) == result
     end
     @testset "Test interval bounds" begin
-        # Initialise model
+        # initialize model
         optimizer = Ipopt.Optimizer
         model = JuMP.Model(optimizer)
         @variable(model, 0 ≤ x_1 ≤ 1)
@@ -140,7 +140,7 @@ end
 
 @testset "Test creating objective function for metaheuristic" begin
     @testset "Test simple problem with all types of variable bounds" begin
-        # Initialise model.
+        # initialize model.
         optimizer = Ipopt.Optimizer
         model = JuMP.Model(optimizer)
         @variable(model, x_1 ≤ 1)
@@ -148,7 +148,7 @@ end
         @variable(model, 0 ≤ x_3 ≤ 1)
         @objective(model, Max, x_1 - x_2 + x_3)
         JuMP.optimize!(model)
-        # Initialise other required structures.
+        # initialize other required structures.
         solution = OrderedDict{VariableRef,Float64}()
         solution[x_1] = 1.0
         solution[x_2] = 0.0
@@ -183,7 +183,7 @@ end
     end
 
     @testset "Test simple problem with all types of constraints" begin
-        # Initialise model.
+        # initialize model.
         optimizer = Ipopt.Optimizer
         model = JuMP.Model(optimizer)
         @variable(model, x_1)
@@ -193,7 +193,7 @@ end
         @constraint(model, x_2 == 0.0)
         @objective(model, Max, 2 * x_1 + x_2)
         JuMP.optimize!(model)
-        # Initialise other required structures.
+        # initialize other required structures.
         solution = OrderedDict{VariableRef,Float64}()
         solution[x_1] = 3.0
         solution[x_2] = 0.0
@@ -230,13 +230,13 @@ end
     optimizer = Ipopt.Optimizer
     model = JuMP.Model(optimizer)
 
-    # Initialise simple `square` JuMP model
+    # initialize simple `square` JuMP model
     @variable(model, 0 ≤ x_1 ≤ 1)
     @variable(model, 0 ≤ x_2 ≤ 1)
     @objective(model, Max, x_1 + x_2)
     JuMP.optimize!(model)
 
-    # Initialise other parameters
+    # initialize other parameters
     solution = OrderedDict{VariableRef,Float64}()
     solution[x_1] = 1.0
     solution[x_2] = 1.0
@@ -264,13 +264,13 @@ end
     optimizer = Ipopt.Optimizer
     model = JuMP.Model(optimizer)
 
-    # Initialise simple `square` JuMP model
+    # initialize simple `square` JuMP model
     @variable(model, 0 ≤ x_1 ≤ 1)
     @variable(model, 0 ≤ x_2 ≤ 1)
     @objective(model, Max, x_1 + x_2)
     JuMP.optimize!(model)
 
-    # Initialise other parameters
+    # initialize other parameters
     solution = OrderedDict{VariableRef,Float64}()
     solution[x_1] = 1.0
     solution[x_2] = 1.0
@@ -296,13 +296,13 @@ end
     optimizer = Ipopt.Optimizer
     model = JuMP.Model(optimizer)
 
-    # Initialise simple `square` JuMP model
+    # initialize simple `square` JuMP model
     @variable(model, 0 ≤ x_1 ≤ 1)
     @variable(model, 0 ≤ x_2 ≤ 1)
     @objective(model, Max, x_1 + x_2)
     JuMP.optimize!(model)
 
-    # Initialise other parameters
+    # initialize other parameters
     solution = OrderedDict{VariableRef,Float64}()
     solution[x_1] = 1.0
     solution[x_2] = 1.0

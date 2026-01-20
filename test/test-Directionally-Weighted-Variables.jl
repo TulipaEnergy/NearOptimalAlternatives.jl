@@ -4,7 +4,7 @@
         optimizer = Ipopt.Optimizer
         model = JuMP.Model(optimizer)
 
-        # Initialise simple `square` JuMP model
+        # initialize simple `square` JuMP model
         @variable(model, 0 ≤ x_1 ≤ 1)
         @variable(model, 0 ≤ x_2 ≤ 1)
         @objective(model, Max, x_1 + x_2)
@@ -36,7 +36,7 @@
         optimizer = Ipopt.Optimizer
         model = JuMP.Model(optimizer)
 
-        # Initialise simple `square` JuMP model
+        # initialize simple `square` JuMP model
         @variable(model, 0 ≤ x_1 ≤ 1)
         @variable(model, 0 ≤ x_2 ≤ 1)
         @objective(model, Max, x_1 + x_2)
@@ -78,7 +78,7 @@
         optimizer = Ipopt.Optimizer
         model = JuMP.Model(optimizer)
 
-        # Initialise simple `square` JuMP model
+        # initialize simple `square` JuMP model
         @variable(model, 0 ≤ x_1 ≤ 1)
         @variable(model, 0 ≤ x_2 ≤ 1)
         @objective(model, Max, x_1 + x_2)
