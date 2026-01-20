@@ -1,23 +1,11 @@
 module NearOptimalAlternatives
 
-# Packages
-
 using JuMP
 using Distances
 using MathOptInterface
 using Metaheuristics
 using DataStructures
 using Statistics
-
-# Main file for generating alternatives
-include("generate-alternatives.jl")
-
-# Create different problems
-include("alternative-optimization.jl")
-include("alternative-metaheuristics.jl")
-
-# Update solutions
-include("results.jl")
 
 # PSOGA Algorithm
 include("algorithms/PSOGA/PSOGA.jl")
@@ -30,5 +18,15 @@ include("MGA-Methods/Spores.jl")
 include("MGA-Methods/Min-Max-Variables.jl")
 include("MGA-Methods/Random-Vector.jl")
 include("MGA-Methods/Directionally-Weighted-Variables.jl")
+
+# Main file for generating alternatives
+include("generate-alternatives.jl")
+
+# Create different problems
+include("alternative-optimization.jl")
+include("alternative-metaheuristics.jl")
+
+# Update solutions
+include("results.jl")
 
 end
