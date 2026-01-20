@@ -9,7 +9,7 @@
         @objective(model, Max, x_1 + x_2)
         JuMP.optimize!(model)
 
-        results = NearOptimalAlternatives.generate_alternatives!(
+        results = NearOptimalAlternatives.generate_alternatives_optimization!(
             model,
             0.1,
             all_variables(model),
@@ -41,7 +41,7 @@
         @objective(model, Max, x_1 + x_2)
         JuMP.optimize!(model)
 
-        results = NearOptimalAlternatives.generate_alternatives!(
+        results = NearOptimalAlternatives.generate_alternatives_optimization!(
             model,
             0.1,
             all_variables(model),
@@ -83,7 +83,7 @@
         @objective(model, Max, x_1 + x_2)
         JuMP.optimize!(model)
 
-        results = NearOptimalAlternatives.generate_alternatives!(
+        results = NearOptimalAlternatives.generate_alternatives_optimization!(
             model,
             0.1,
             all_variables(model),

@@ -1,4 +1,4 @@
-@testset "Update solutions of NearOptimalAlternatives optimisation" begin
+@testset "Update solutions of NearOptimalAlternatives optimization" begin
     @testset "Make sure using an unsolved NearOptimalAlternatives model fails." begin
         optimizer = Ipopt.Optimizer
         model = JuMP.Model(optimizer)

@@ -1,7 +1,7 @@
-export generate_alternatives!, generate_alternatives
+export generate_alternatives_optimization!, generate_alternatives_metaheuristics
 
 """
-results = generate_alternatives!(
+results = generate_alternatives_optimization!(
   model::JuMP.Model,
   optimality_gap::Float64,
   variables::AbstractArray{T,N},
@@ -10,7 +10,7 @@ results = generate_alternatives!(
   metric::Distances.SemiMetric = SqEuclidean(),
   fixed_variables::Vector{VariableRef} = VariableRef[],
 ) where {T<:Union{VariableRef,AffExpr},N}
-Generate `n_alternatives` solutions to `model` which are as distant from the optimum and each other, but with a maximum `optimality_gap`, using optimisation.
+Generate `n_alternatives` solutions to `model` which are as distant from the optimum and each other, but with a maximum `optimality_gap`, using optimization.
 
 # Arguments
 - `model::JuMP.Model`: a solved JuMP model for which alternatives are generated.
@@ -21,7 +21,7 @@ Generate `n_alternatives` solutions to `model` which are as distant from the opt
 - `metric::Distances.Metric=SqEuclidean()`: the metric used to maximise the difference between alternatives and the optimal solution.
 - `fixed_variables::Vector{VariableRef}=[]`: a subset of all variables of `model` that are not allowed to be changed when seeking for alternatives.
 """
-function generate_alternatives!(
+function generate_alternatives_optimization!(
     model::JuMP.Model,
     optimality_gap::Float64,
     variables::AbstractArray{T,N},
@@ -80,7 +80,7 @@ function generate_alternatives!(
 end
 
 """
-    result = generate_alternatives(
+    result = generate_alternatives_metaheuristics(
       model::JuMP.Model,
       optimality_gap::Float64,
       n_alternatives::Int64,
@@ -99,7 +99,7 @@ Generate `n_alternatives` solutions to `model` which are as distant from the opt
 - `metric::Distances.Metric=SqEuclidean()`: the metric used to maximise the difference between alternatives and the optimal solution.
 - `fixed_variables::Vector{VariableRef}=[]`: a subset of all variables of `model` that are not allowed to be changed when seeking for alternatives.
 """
-function generate_alternatives(
+function generate_alternatives_metaheuristics(
     model::JuMP.Model,
     optimality_gap::Float64,
     n_alternatives::Int64,

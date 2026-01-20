@@ -334,7 +334,7 @@ end
         problem::MetaheuristicProblem
     )
 
-Optimise the `problem` using the specified metaheuristic algorithm and return the result.
+Optimize the `problem` using the specified metaheuristic algorithm and return the result.
 """
 function run_alternative_generating_problem!(problem::MetaheuristicProblem)
     result = Metaheuristics.optimize(problem.objective, problem.bounds, problem.algorithm)

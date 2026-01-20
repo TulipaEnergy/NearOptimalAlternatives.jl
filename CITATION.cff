@@ -32,7 +32,7 @@ authors:
     orcid: 'https://orcid.org/0000-0002-0470-6241'
 repository-code: 'https://github.com/TulipaEnergy/NearOptimalAlternatives.jl'
 abstract: >-
-  NearOptimalAlternatives.jl is a Julia package for generating alternative solutions to a solved JuMP.jl optimisation model. It can use either mathematical optimisation or a metaheuristic algorithm from Metaheuristics.jl to generate solutions that are as different as possible to the optimal solution, subject to a maximum deviation in terms of objective value.
+  NearOptimalAlternatives.jl is a Julia package for generating alternative solutions to a solved JuMP.jl optimization model. It can use either mathematical optimization or a metaheuristic algorithm from Metaheuristics.jl to generate solutions that are as different as possible to the optimal solution, subject to a maximum deviation in terms of objective value.
 keywords:
   - Open source tool
   - Modelling-for-Generating-Alternatives
