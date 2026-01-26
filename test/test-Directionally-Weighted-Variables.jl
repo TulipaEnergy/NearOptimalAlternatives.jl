@@ -148,5 +148,6 @@
         @test weights_update[1] in (0, 1)
         @test weights_update[2] in (-1, 0)
         @test weights_update[3] in (-1, 0, 1)
+
     end
 end
