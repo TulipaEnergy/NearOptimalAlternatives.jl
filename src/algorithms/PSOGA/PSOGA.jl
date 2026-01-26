@@ -6,7 +6,7 @@ import Metaheuristics: reset_to_violated_bounds!
 import Metaheuristics: velocity
 
 """
-    Structure holding all parameters for PSOGA (Particle Swarm Optimisation for Generating Alternatives).
+    Structure holding all parameters for PSOGA (Particle Swarm optimization for Generating Alternatives).
 """
 mutable struct PSOGA <: AbstractParameters
     N::Int                # Total population size
@@ -84,7 +84,7 @@ end
     kwargs...
   )
 
-Initialise all parameters used when solving a problem using PSOGA. Called by main loop of Metaheuristics.
+initialize all parameters used when solving a problem using PSOGA. Called by main loop of Metaheuristics.
 """
 function initialize!(
     status,
@@ -114,11 +114,11 @@ function initialize!(
         )
     end
 
-    # Initialise velocity and population parameters.
+    # initialize velocity and population parameters.
     parameters.v = zeros(parameters.N, D)
     status = gen_initial_state(problem, parameters, information, options, status)
 
-    # Initialise parameter for best values per subpopulation and populate this array with bests in initial population.
+    # initialize parameter for best values per subpopulation and populate this array with bests in initial population.
     parameters.subBest = Array{Any}(undef, parameters.N_solutions)
     fill!(parameters.subBest, status.population[1])
     for (i, sol) in enumerate(status.population)
@@ -134,7 +134,7 @@ function initialize!(
         end
     end
 
-    # Initialise flock (set of all previous populations).
+    # initialize flock (set of all previous populations).
     parameters.flock = status.population
 
     return status
@@ -162,7 +162,7 @@ function update_state!(
     args...;
     kwargs...,
 )
-    # Initialise vector of new generation of individuals.
+    # initialize vector of new generation of individuals.
     X_new = zeros(parameters.N, Metaheuristics.getdim(problem))
 
     # Update all individuals' position by adding their velocity.

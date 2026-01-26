@@ -119,7 +119,7 @@ function create_objective(
     function f(x)
         # Objective function for metaheuristic (= distance between individual x and solution values of original LP). Solution_values does not contain fixed_variables, these are not required in objective as the distance for these variables is zero.
         fx = [-Distances.evaluate(metric, x, solution_values)]
-        # Initialise set of inequality constraints.
+        # initialize set of inequality constraints.
         gx = Vector{Float64}(undef, 0)
         # Add objective gap constraint depending on whether original LP is maximised or minimised.
         if JuMP.objective_sense(model) == JuMP.MAX_SENSE
@@ -137,7 +137,7 @@ function create_objective(
                 (1 + optimality_gap * sign(original_objective_value)),
             )
         end
-        # Initialise set of equality constraints.
+        # initialize set of equality constraints.
         hx = Vector{Float64}(undef, 0)
 
         for i in eachindex(constraint_functions)
@@ -216,7 +216,7 @@ Transform the bounds from a JuMP Model into a matrix of bounds readable by Metah
 - `index_map::Dict{Int64, Int64}`: dictionary mapping indices in the JuMP/MathOptInterface model to indices of `x`.
 """
 function extract_bounds(model::JuMP.Model, index_map::Dict{Int64,Int64})
-    # Initialise bound matrix with all variables between -Inf and Inf.
+    # initialize bound matrix with all variables between -Inf and Inf.
     n_variables = length(index_map)
     bounds = zeros(Float64, (2, n_variables))
     for i = 1:n_variables
@@ -294,7 +294,7 @@ function create_alternative_generating_problem(
         fixed_variables,
     )
     bounds = extract_bounds(model, index_map)
-    # Possible TODO: Initialise initial_population
+    # Possible TODO: initialize initial_population
 
     return MetaheuristicProblem(objective, bounds, algorithm)
 end

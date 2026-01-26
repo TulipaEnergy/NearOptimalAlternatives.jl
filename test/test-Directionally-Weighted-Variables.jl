@@ -1,10 +1,9 @@
-
-@testset "Test generate alternatives with Max Distance as modeling_method." begin
+@testset "Test generate alternatives with Directionally Weighted Variables as modeling_method." begin
     @testset "Test regular run with one alternative." begin
         optimizer = Ipopt.Optimizer
         model = JuMP.Model(optimizer)
 
-        # Initialise simple `square` JuMP model
+        # initialize simple `square` JuMP model
         @variable(model, 0 ≤ x_1 ≤ 1)
         @variable(model, 0 ≤ x_2 ≤ 1)
         @objective(model, Max, x_1 + x_2)
@@ -36,7 +35,7 @@
         optimizer = Ipopt.Optimizer
         model = JuMP.Model(optimizer)
 
-        # Initialise simple `square` JuMP model
+        # initialize simple `square` JuMP model
         @variable(model, 0 ≤ x_1 ≤ 1)
         @variable(model, 0 ≤ x_2 ≤ 1)
         @objective(model, Max, x_1 + x_2)
@@ -78,7 +77,7 @@
         optimizer = Ipopt.Optimizer
         model = JuMP.Model(optimizer)
 
-        # Initialise simple `square` JuMP model
+        # initialize simple `square` JuMP model
         @variable(model, 0 ≤ x_1 ≤ 1)
         @variable(model, 0 ≤ x_2 ≤ 1)
         @objective(model, Max, x_1 + x_2)
@@ -113,5 +112,41 @@
                   results.objective_values[2] ≤ 2.0 ||
                   isapprox(results.objective_values[2], 2.0)
               )
+    end
+    @testset "Test weights" begin
+        optimizer = Ipopt.Optimizer
+        model = JuMP.Model(optimizer)
+
+        @variable(model, 0 ≤ x_1 ≤ 1)
+        @variable(model, 0 ≤ x_2 ≤ 1)
+        @variable(model, 0 ≤ x_3 ≤ 1)
+
+        @objective(model, Max, x_1 - x_2 + 0 * x_3)
+        JuMP.optimize!(model)
+
+        weights = zeros(3)
+        DWV_initial!(
+            model,
+            [x_1, x_2, x_3],
+            VariableRef[];
+            weights = weights,
+            old_objective = JuMP.objective_function(model),
+        )
+
+        @test weights[1] in (0, 1)
+        @test weights[2] in (-1, 0)
+        @test weights[3] in (-1, 0, 1)
+
+        weights_update = zeros(3)
+        DWV_update!(
+            model,
+            [x_1, x_2, x_3];
+            weights = weights_update,
+            old_objective = JuMP.objective_function(model),
+        )
+
+        @test weights_update[1] in (0, 1)
+        @test weights_update[2] in (-1, 0)
+        @test weights_update[3] in (-1, 0, 1)
     end
 end

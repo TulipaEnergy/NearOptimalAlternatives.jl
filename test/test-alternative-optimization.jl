@@ -1,9 +1,9 @@
 @testset "Test create alternative problem" begin
-    @testset "Test simple maximisation problem" begin
+    @testset "Test simple maximization problem" begin
         optimizer = Ipopt.Optimizer
         model = JuMP.Model(optimizer)
 
-        # Initialise simple `square` JuMP model
+        # initialize simple `square` JuMP model
         @variable(model, 0 ≤ x_1 ≤ 1)
         @variable(model, 0 ≤ x_2 ≤ 1)
         @objective(model, Max, x_1 + x_2)
@@ -25,11 +25,11 @@
               MOI.GreaterThan(0.9 * (x_1_res + x_2_res))
     end
 
-    @testset "Test simple minimisation problem" begin
+    @testset "Test simple minimization problem" begin
         optimizer = Ipopt.Optimizer
         model = JuMP.Model(optimizer)
 
-        # Initialise simple `square` JuMP model
+        # initialize simple `square` JuMP model
         @variable(model, 1 ≤ x_1 ≤ 2)
         @variable(model, 1 ≤ x_2 ≤ 2)
         @objective(model, Min, x_1 + x_2)
@@ -58,11 +58,11 @@
               MOI.LessThan(1.1 * (x_1_res + x_2_res))
     end
 
-    @testset "Test maximisation with selected variables" begin
+    @testset "Test maximization with selected variables" begin
         optimizer = Ipopt.Optimizer
         model = JuMP.Model(optimizer)
 
-        # Initialise simple `square` JuMP model
+        # initialize simple `square` JuMP model
         @variable(model, 0 ≤ x_1 ≤ 1)
         @variable(model, 0 ≤ x_2 ≤ 1)
         @objective(model, Max, x_1 + x_2)
@@ -97,7 +97,7 @@ end
     optimizer = Ipopt.Optimizer
     model = JuMP.Model(optimizer)
 
-    # Initialise simple `square` JuMP model
+    # initialize simple `square` JuMP model
     @variable(model, 0 ≤ x_1 ≤ 1)
     @variable(model, 0 ≤ x_2 ≤ 1)
     @objective(model, Max, (x_1 - 1)^2 + (x_2 - 1)^2)
