@@ -124,13 +124,14 @@
         @objective(model, Max, x_1 - x_2 + 0 * x_3)
         JuMP.optimize!(model)
 
+        old_objective = JuMP.objective_function(model)
         weights = zeros(3)
         DWV_initial!(
             model,
             [x_1, x_2, x_3],
             VariableRef[];
             weights = weights,
-            old_objective = JuMP.objective_function(model),
+            old_objective = old_objective,
         )
 
         @test weights[1] in (0, 1)
@@ -142,7 +143,7 @@
             model,
             [x_1, x_2, x_3];
             weights = weights_update,
-            old_objective = JuMP.objective_function(model),
+            old_objective = old_objective,
         )
 
         @test weights_update[1] in (0, 1)
