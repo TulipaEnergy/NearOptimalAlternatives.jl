@@ -18,6 +18,7 @@ This page gives a quick orientation of the repository and highlights what each s
 - `alternative-metaheuristics.jl`: translates a JuMP/MathOptInterface model into a metaheuristics-friendly objective/constraints representation and runs a Metaheuristics.jl algorithm.
 - `results.jl`: defines `AlternativeSolutions` and helper functions to collect decision-variable values and objective values from JuMP or Metaheuristics runs.
 - `MGA-Methods/`: individual implementations of each modeling-to-generate-alternatives (MGA) strategy used by the dispatch tables (see next page for details).
+- `algorithms/`: individual implementation of (bio-inspired) algorithms (see next-next page for details).
 
 ## Typical control flow
 
