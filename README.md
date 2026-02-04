@@ -11,7 +11,7 @@
 [![All Contributors](https://img.shields.io/github/all-contributors/TulipaEnergy/NearOptimalAlternatives.jl?labelColor=5e1ec7&color=c0ffee&style=flat-square)](#contributors)
 [![BestieTemplate](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/JuliaBesties/BestieTemplate.jl/main/docs/src/assets/badge.json)](https://github.com/JuliaBesties/BestieTemplate.jl)
 
- This package generates near optimal alternative solutions to a solved optimization problem. The alternative solutions are within a maximum specified percentage of the optimum. Alternatives can either be generated using mathematical optimization or metaheuristics algorithms.
+This package generates near optimal alternative solutions to a solved optimization problem. The alternative solutions are within a maximum specified percentage of the optimum. Alternatives can either be generated using mathematical optimization or metaheuristics algorithms.
 
 ## How to Cite
 
