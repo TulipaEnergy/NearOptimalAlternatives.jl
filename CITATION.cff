@@ -6,30 +6,34 @@ message: >-
   metadata from this file.
 type: software
 authors:
-  - given-names: Matthijs
-    family-names: Arnoldus
-    email: m.arnoldus-1@tudelft.nl
-    affiliation: Delft University of Technology
-  - given-names: Grigory
-    family-names: Neustroev
-    email: g.neustroev@tudelft.nl
-    affiliation: Delft University of Technology
-    orcid: 'https://orcid.org/0000-0002-7706-7778'
   - given-names: Germán
     family-names: Morales-España
     email: german.morales@tno.nl
     affiliation: TNO
     orcid: 'https://orcid.org/0000-0002-6372-6197'
-  - given-names: Ni
-    family-names: Wang
-    email: ni.wang@tno.nl
-    affiliation: TNO
-    orcid: 'https://orcid.org/0000-0001-7037-7004'
+  - given-names: Grigory
+    family-names: Neustroev
+    email: g.neustroev@tudelft.nl
+    affiliation: Delft University of Technology
+    orcid: 'https://orcid.org/0000-0002-7706-7778'
+  - given-names: Luuk
+    family-names: Van de Laar
+    email: l.w.l.vandelaar@student.tudelft.nl
+    affiliation: Delft University of Technology
+  - given-names: Matthijs
+    family-names: Arnoldus
+    email: m.arnoldus-1@tudelft.nl
+    affiliation: Delft University of Technology
   - given-names: Mathijs
     family-names: De Weerdt
     email: M.M.deWeerdt@tudelft.nl
     affiliation: Delft University of Technology
     orcid: 'https://orcid.org/0000-0002-0470-6241'
+  - given-names: Ni
+    family-names: Wang
+    email: ni.wang@tno.nl
+    affiliation: TNO
+    orcid: 'https://orcid.org/0000-0001-7037-7004'
 repository-code: 'https://github.com/TulipaEnergy/NearOptimalAlternatives.jl'
 abstract: >-
   NearOptimalAlternatives.jl is a Julia package for generating alternative solutions to a solved JuMP.jl optimization model. It can use either mathematical optimization or a metaheuristic algorithm from Metaheuristics.jl to generate solutions that are as different as possible to the optimal solution, subject to a maximum deviation in terms of objective value.
