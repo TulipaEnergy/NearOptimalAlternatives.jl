@@ -20,6 +20,7 @@ This content is released under the [Apache License 2.0](https://www.apache.org/l
   <tbody>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/g-moralesespana"><img src="https://avatars.githubusercontent.com/u/42405171?v=4?s=100" width="100px;" alt="Germán Morales"/><br /><sub><b>Germán Morales</b></sub></a><br /><a href="#research-g-moralesespana" title="Research">🔬</a> <a href="#ideas-g-moralesespana" title="Ideas, Planning, & Feedback">🤔</a> <a href="#fundingFinding-g-moralesespana" title="Funding Finding">🔍</a> <a href="#projectManagement-g-moralesespana" title="Project Management">📆</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/marnoldus"><img src="https://avatars.githubusercontent.com/u/45602307?v=4?s=100" width="100px;" alt="marnoldus"/><br /><sub><b>marnoldus</b></sub></a><br /><a href="#research-marnoldus" title="Research">🔬</a> <a href="#code-marnoldus" title="Code">💻</a> <a href="#ideas-marnoldus" title="Ideas, Planning, & Feedback">🤔</a></td>
     </tr>
   </tbody>
 </table>
