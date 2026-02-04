@@ -1,7 +1,14 @@
 name = "NearOptimalAlternatives"
 uuid = "a88418a5-8dc5-4f1c-8a3e-d5a75ec49c70"
 version = "0.1.0"
-authors = ["Matthijs Arnoldus <m.arnoldus-1@tudelft.nl> and contributors"]
+authors = [
+  "Germán Morales-España <german.morales@tno.nl>",
+  "Grigory Neustroev <G.Neustroev@tudelft.nl>",
+  "Luuk van de Laar <l.w.l.vandelaar@student.tudelft.nl>",
+  "Matthijs Arnoldus <m.arnoldus-1@tudelft.nl>",
+  "Matthijs de Weerdt <m.m.deweerdt@tudelft.nl>",
+  "Ni Wang <ni.wang@tno.nl>",
+]
 
 [deps]
 DataStructures = "864edb3b-99cc-5e75-8d2d-829cb0a9cfe8"
