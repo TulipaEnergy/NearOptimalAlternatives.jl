@@ -30,6 +30,7 @@ If you want to make contributions of any kind, please first that a look into our
   <tbody>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/g-moralesespana"><img src="https://avatars.githubusercontent.com/u/42405171?v=4?s=100" width="100px;" alt="Germán Morales"/><br /><sub><b>Germán Morales</b></sub></a><br /><a href="#research-g-moralesespana" title="Research">🔬</a> <a href="#ideas-g-moralesespana" title="Ideas, Planning, & Feedback">🤔</a> <a href="#fundingFinding-g-moralesespana" title="Funding Finding">🔍</a> <a href="#projectManagement-g-moralesespana" title="Project Management">📆</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://www.alg.ewi.tudelft.nl/weerdt/"><img src="https://avatars.githubusercontent.com/u/1650785?v=4?s=100" width="100px;" alt="Mathijs de Weerdt"/><br /><sub><b>Mathijs de Weerdt</b></sub></a><br /><a href="#fundingFinding-mdeweerdt" title="Funding Finding">🔍</a> <a href="#projectManagement-mdeweerdt" title="Project Management">📆</a></td>
     </tr>
   </tbody>
 </table>
