@@ -20,6 +20,18 @@
         "fundingFinding",
         "projectManagement"
       ]
+    },
+    {
+      "login": "gnawin",
+      "name": "Ni Wang",
+      "avatar_url": "https://avatars.githubusercontent.com/u/125902905?v=4",
+      "profile": "https://github.com/gnawin",
+      "contributions": [
+        "research",
+        "code",
+        "review",
+        "ideas"
+      ]
     }
   ]
 }
