@@ -1,4 +1,5 @@
 {
+  "contributorsSortAlphabetically": true,
   "projectName": "NearOptimalAlternatives.jl",
   "projectOwner": "TulipaEnergy",
   "files": [
@@ -28,29 +29,29 @@
       "contributions": [
         "fundingFinding",
         "projectManagement"
-        ]
-        },
-        {
+      ]
+    },
+    {
       "login": "marnoldus",
       "name": "marnoldus",
       "avatar_url": "https://avatars.githubusercontent.com/u/45602307?v=4",
       "profile": "https://github.com/marnoldus",
       "contributions": [
         "research",
-        "code",
-        ]
-        },
-        {
+        "code"
+      ]
+    },
+    {
       "login": "blibliboe",
       "name": "Luuk van de Laar",
       "avatar_url": "https://avatars.githubusercontent.com/u/79008431?v=4",
       "profile": "https://github.com/blibliboe",
       "contributions": [
         "research",
-        "code",
-        ]
-        },
-        {
+        "code"
+      ]
+    },
+    {
       "login": "greg-neustroev",
       "name": "Greg Neustroev",
       "avatar_url": "https://avatars.githubusercontent.com/u/32451432?v=4",
