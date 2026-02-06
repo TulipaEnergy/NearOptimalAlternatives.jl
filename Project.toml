@@ -1,6 +1,6 @@
 name = "NearOptimalAlternatives"
 uuid = "a88418a5-8dc5-4f1c-8a3e-d5a75ec49c70"
-version = "0.1.0"
+version = "0.1.1"
 authors = [
   "Germán Morales-España <german.morales@tno.nl>",
   "Grigory Neustroev <G.Neustroev@tudelft.nl>",
