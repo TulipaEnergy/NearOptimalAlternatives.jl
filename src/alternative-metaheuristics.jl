@@ -340,3 +340,24 @@ function run_alternative_generating_problem!(problem::MetaheuristicProblem)
     result = Metaheuristics.optimize(problem.objective, problem.bounds, problem.algorithm)
     return result
 end
+
+function lbfgs_search_alternatives(model::JuMP.Model, n_alternatives::Int64)
+    # Get the optimal solution from the model
+    x_optimal = value.(all_variables(model))
+
+    alternatives = []
+    x_current = x_optimal
+
+    for i = 1:n_alternatives
+        alternative = run_lbfgs_mga(model, x_current)
+        if !isnothing(alternative)
+            push!(alternatives, alternative)
+            x_current = alternative
+        else
+            # If no alternative is found, we stop
+            break
+        end
+    end
+
+    return alternatives
+end
