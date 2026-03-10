@@ -1,4 +1,5 @@
-export generate_alternatives_optimization!, generate_alternatives_metaheuristics
+export generate_alternatives_optimization!,
+    generate_alternatives_metaheuristics, generate_alternatives_lbfgs
 
 """
 results = generate_alternatives_optimization!(
@@ -178,6 +179,34 @@ function generate_alternatives_metaheuristics(
                 model,
             )
         end
+    end
+
+    return result
+end
+
+function generate_alternatives_lbfgs(model::JuMP.Model, n_alternatives::Int64)
+    if !is_solved_and_feasible(model)
+        throw(ArgumentError("JuMP model has not been solved."))
+    elseif n_alternatives < 1
+        throw(
+            ArgumentError(
+                "Number of alternatives (= $n_alternatives) should be at least 1.",
+            ),
+        )
+    end
+
+    result = AlternativeSolutions([], [])
+
+    @info "Setting up NearOptimalAlternatives problem and solver."
+    alternatives = lbfgs_search_alternatives(model, n_alternatives)
+
+    vars = all_variables(model)
+    for alt in alternatives
+        sol = Dict{VariableRef,Float64}()
+        for i = 1:length(vars)
+            sol[vars[i]] = alt[i]
+        end
+        update_solutions!(result, sol, model)
     end
 
     return result

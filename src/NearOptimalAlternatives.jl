@@ -11,6 +11,9 @@ using Statistics
 include("algorithms/PSOGA/PSOGA.jl")
 include("algorithms/PSOGA/is_better.jl")
 
+include("algorithms/LBFGS-Local-Search.jl")
+using .GradientMGA
+
 # MGA Methods
 include("MGA-Methods/Max-Distance.jl")
 include("MGA-Methods/HSJ.jl")
@@ -25,6 +28,7 @@ include("generate-alternatives.jl")
 # Create different problems
 include("alternative-optimization.jl")
 include("alternative-metaheuristics.jl")
+export lbfgs_search_alternatives
 
 # Update solutions
 include("results.jl")
