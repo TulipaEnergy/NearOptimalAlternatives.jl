@@ -31,5 +31,5 @@ jobs:
           - windows-latest
 
         arch:
-          - x64
+          - default
         allow_failure: [false]
