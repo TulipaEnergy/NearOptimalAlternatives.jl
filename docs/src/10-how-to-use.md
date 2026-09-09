@@ -207,7 +207,7 @@ alternatives = generate_alternatives_metaheuristics(model, optimality_gap, n_alt
 `generate_alternatives_optimization!` and `generate_alternatives_arclength!` both accept a `reconfigure_solver!` callback (see the [IO Reference](15-io.md) for its exact signature). Its job is to switch the attached solver's *algorithm* — not the model — partway through generation, so later solves start from the previous solve's basis instead of solving cold. Whether that helps depends entirely on how big the change is between successive solves:
 
 - In `generate_alternatives_optimization!`, only the *objective* changes between alternatives (the direction). That is the textbook case for a **primal**-simplex warm start.
-- In `generate_alternatives_arclength!`, only the *budget* (the near-optimal cost constraint's right-hand side) moves within a direction. That is the textbook case for a **dual**-simplex warm start.
+- In `generate_alternatives_arclength!`, only the *budget* (the near-optimal cost constraint's right-hand side) moves within a direction — the textbook case for a **dual**-simplex warm start — but a direction change is an objective change, so the natural combined pattern (below) also brings primal simplex back in between directions.
 
 `reconfigure_solver!` only *sets solver attributes* — the package itself handles the mandatory re-solve after the attribute change. The exact attribute names are solver-specific; the example below uses Gurobi's (`"Method"`: `2` = barrier, `0` = primal simplex, `1` = dual simplex; `"Crossover"`: `0` = off, `-1` = on), since Gurobi is the most common solver this package is used with in practice, but the same idea applies to any solver whose MathOptInterface wrapper exposes an algorithm-choice attribute (e.g. HiGHS's `"solver"` string attribute).
 
@@ -240,25 +240,22 @@ alternatives = generate_alternatives_optimization!(
 
 `reconfigure_solver!` fires once, right after alternative #1 is found, and switches every solve after that to primal simplex — each one now starts from the previous alternative's basis instead of from scratch. This is only worth the one-time crossover cost when you're generating enough alternatives (`n_alternatives`) that the savings on the remaining solves outweigh it; for a handful of alternatives on a small model, plain cold barrier (no `reconfigure_solver!` at all) is often just as fast, or faster — the crossover step itself is not always cheap or even reliable on a large, ill-conditioned model, so measure before committing to this pattern at scale.
 
-### Warm-starting `generate_alternatives_arclength!` (dual simplex)
+### Warm-starting `generate_alternatives_arclength!` (dual simplex within a direction, primal simplex between directions)
 
-The setup is the same, but `reconfigure_solver!` here fires once *per direction*, right after that direction's first point, and — because arclength solves budgets out of order within a direction — it can return a closure that restores the original algorithm before the *next* direction starts (since the next direction changes the objective, the case primal simplex favours, not the budget):
+The setup is the same, but `reconfigure_solver!` here fires once *per direction*, right after that direction's first point, and returns a closure that runs once at the *start of the next* direction — because arclength solves budgets out of order within a direction, but a new direction is a fresh objective, which is exactly what primal simplex is warm-starting for in the first place. So rather than treating "warm-start within a direction" and "warm-start across directions" as two separate ideas, one `reconfigure_solver!` covers both at once: dual simplex for the rest of the current direction's points, and the *returned closure* switches straight to primal simplex for the next direction's first point — no restore-to-barrier step needed in between.
 
 ```julia
 to_dual_simplex!(m) = set_optimizer_attribute(m, "Method", 1)
-restore_to_barrier!(m) = begin
-    set_optimizer_attribute(m, "Method", 2)
-    set_optimizer_attribute(m, "Crossover", -1)
-end
+to_primal_simplex!(m) = set_optimizer_attribute(m, "Method", 0)
 
 front = generate_alternatives_arclength!(
     model, 0.2, [x_cheap, x_expensive], 3;   # 3 directions
     n_budget = 5,
     reconfigure_solver! = m -> begin
         to_dual_simplex!(m)
-        restore_to_barrier!   # returned, not called: this is the restore closure
+        to_primal_simplex!   # returned, not called: this is the restore closure
     end,
 )
 ```
 
-The returned function (`restore_to_barrier!` itself, not a call to it) is applied automatically at the start of the next direction. If you don't need to restore anything between directions, return `nothing` instead.
+`to_primal_simplex!` is returned *uncalled* — it already has the `model -> nothing` shape `reconfigure_solver!`'s return value needs, so there is nothing to wrap it in. The package applies it automatically at the start of the next direction, right after that direction's objective is updated. Every direction therefore opens on primal simplex (warm from the previous direction's basis) and switches to dual simplex once its own budget starts moving — one algorithm for each of the two things that actually change in this function, with no separate crossover-restore step to write yourself. If you don't need this and just want dual-within-direction with no cross-direction carry-over, return `nothing` instead of the function reference.

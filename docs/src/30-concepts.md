@@ -134,10 +134,13 @@ stops at even *map distance* apart, you'll cluster stops uselessly on the flat, 
 past the steep switchbacks where the trail actually changes direction. Placing stops at even *distance
 walked along the trail* instead puts more stops exactly where the path bends and fewer where it runs
 straight. Budget-uniform spacing is the first kind of stop-placement (even in cost); arclength spacing is
-the second (even along the curve) — see the figure below for what this looks like on a front that starts
-steep and flattens out, the shape most near-optimal fronts actually have.
+the second (even along the curve) — see the figure below, generated from a real 5-point solve on the
+[Norse](https://github.com/TulipaEnergy/TulipaEnergyModel.jl) example dataset (not a schematic), for what
+this looks like in practice. The effect is real but can be subtle depending on how sharply the front
+actually curves for a given instance and direction — the gap between spacing strategies is more dramatic
+the more the front bends.
 
-![Budget-uniform spacing (left) clusters points on the flat tail and leaves a gap exactly where the front bends most; arclength spacing (right) places points evenly along the curve itself, concentrating them where the front actually changes.](assets/arclength_intuition.png)
+![Budget-uniform spacing (left) versus arclength spacing (right), both against the same dense reference front (gray), from a real 5-point `n_budget` solve on the Norse dataset: arclength spacing shifts points toward the steeper part of the curve rather than clustering them evenly in cost.](assets/arclength_intuition.png)
 
 - Behavior: a pseudo-arclength predictor-corrector scheme [^Keller1977][^AllgowerGeorg1990]. The two budget endpoints are solved first to anchor and normalise the (cost, diversity) metric. Each subsequent budget is then *predicted* from a finite-difference tangent, so every step advances a fixed target arclength, and *corrected* by an exact solve at that budget. A budget that fails to solve is stepped over rather than aborting the direction. The same idea has been used to trace Pareto fronts in multi-objective optimization [^Hillermeier2001][^Schutze2005].
 - `reconfigure_solver!` lets the solver's algorithm be switched (e.g. barrier to dual simplex) once per direction, right after that direction's first point, so the rest of that direction's points can warm-start off the resulting basis. See the [warm-starting tutorial](@ref warm-start-tutorial) and the [IO Reference](15-io.md) for details.
