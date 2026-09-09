@@ -7,7 +7,13 @@ Depth = 5
 
 Here we explain in more detail the underlying theoretical concepts of NearOptimalAlternatives.jl. We first discuss the optimization-based approaches and then discuss the evolutionary approaches.
 
-## Optimization-based Methods
+## System Architecture
+
+Both pathways start from the same solved model and near-optimal budget constraint, then diverge: the optimization-based pathway repeatedly re-solves the same JuMP model with a method-specific objective, while the evolutionary pathway translates the problem once into a self-contained search space for a population-based algorithm. Both converge on the same `AlternativeSolutions` output.
+
+![System architecture: optimization-based and evolutionary pathways from a solved model to AlternativeSolutions](assets/architecture.png)
+
+## [Optimization-based Methods](@id opt-based-methods)
 
 One can directly maximize the distance among the alternatives or minimized the weighted sum of decision variables using a variety of methods listed below.
 
@@ -55,6 +61,17 @@ w_i^k = w_i^{k-1} + \frac{x_i^{k-1}}{x_i^{\text{max}}}, \quad \forall k, 1 \leq 
 w_i^0 = 0.
 ```
 
+!!! info "Variables without an upper bound"
+    SPORES needs $x_i^{\text{max}}$ for every variable it scores, so **every variable passed to SPORES
+    must have a finite upper bound** — `Spores_initial!`/`Spores_update!` raise an `ArgumentError`
+    immediately if one doesn't (checked before any solve, not left to fail silently; a variable with an
+    upper bound of exactly `0` is handled differently and needs no special care — SPORES just skips it,
+    weight contribution `0` regardless). If your model has a variable with no natural capacity limit, you
+    have three options:
+    - Give it a large-but-finite bound if a sensible one exists (e.g. an installed-capacity cap well above anything the optimizer would realistically choose).
+    - Leave it out of the `variables` argument passed to `generate_alternatives_optimization!`/`_sweep!`/`_arclength!`. SPORES then simply never perturbs that variable — it is neither part of the near-optimal search nor fixed, just outside SPORES' scoring.
+    - Use a different modeling method instead — every other method on this page (Max-Distance, HSJ, Min/Max Variables, Random Vector, Directionally Weighted Variables) works on unbounded variables; SPORES is the only one that requires them.
+
 ### Min/Max Variables (`:Min_Max_Variables`)
 
 - Files: `MGA-Methods/Min-Max-Variables.jl`
@@ -87,6 +104,47 @@ w_i \sim \text{Uniform}(−1, 1), \forall i
 - Goal: choose variable directions based on the sign of their coefficients in the original objective to promote directional diversity. This helps to find non-dominated solutions. For the concept of dominance, check out [^VandeLaar2025].
 - Behavior: weights depend on objective coefficients (`>0` draws from {0,1}, `<0` from {-1,0}, else {-1,0,1}); `DWV_initial!` fixes requested variables, sets the weighted-sum objective, and `DWV_update!` redraws weights before the next solve.
 
+## [Alternative-Generation Strategies](@id gen-strategies)
+
+The methods above choose which *direction* to search in at each iteration (the objective used to find the next alternative). Separately, the package offers three strategies for how many points are collected per direction and how the cost budget between the optimum and the near-optimal boundary is walked to reach them. All three work with any of the modeling methods above.
+
+### [Single Point per Direction (`generate_alternatives_optimization!`)](@id single-point)
+
+- Files: `generate-alternatives.jl`
+- Goal: find exactly one alternative per direction, at the full near-optimal budget.
+- Behavior: sets up the problem once, then alternates between `update_objective_function!` (pick the next direction) and a single solve at the budget boundary, for `n_alternatives` iterations. This is the classic MGA loop.
+
+### [Budget Sweep (`generate_alternatives_sweep!`)](@id budget-sweep)
+
+- Files: `sweep-alternatives.jl`
+- Goal: return a dense near-optimal front per direction instead of a single point.
+- Behavior: for each direction, the budget is stepped through `n_budget` evenly-spaced levels between the tight and full budget, recording every intermediate optimum. Each direction still ends at the full budget, so directions that accumulate from the previous solution (SPORES, HSJ) advance the same way as the single-point method.
+
+### [Arclength Continuation (`generate_alternatives_arclength!`)](@id arclength-continuation)
+
+- Files: `arclength-alternatives.jl`
+- Goal: like the budget sweep, but places the `n_budget` points evenly *along the trade-off curve* (cost vs. diversity) instead of evenly along the budget axis, so points are not wasted where the front is flat and are concentrated where it curves sharply.
+
+**The intuition.** "Arclength" is not a 2D-only idea, even though it sounds like one — it refers to the
+length along the *cost-vs-diversity curve*, a 2D summary plot you get by plotting each alternative's cost
+against its diversity value, regardless of whether the underlying model has 3 variables or 3 million.
+Every point on that curve is a full alternative in the model's own (possibly huge) variable space; the
+curve itself just tracks two numbers per point. Picture a hiking trail traced on a map: if you place rest
+stops at even *map distance* apart, you'll cluster stops uselessly on the flat, easy stretches and skip
+past the steep switchbacks where the trail actually changes direction. Placing stops at even *distance
+walked along the trail* instead puts more stops exactly where the path bends and fewer where it runs
+straight. Budget-uniform spacing is the first kind of stop-placement (even in cost); arclength spacing is
+the second (even along the curve) — see the figure below, generated from a real 5-point solve on the
+[Norse](https://github.com/TulipaEnergy/TulipaEnergyModel.jl) example dataset (not a schematic), for what
+this looks like in practice. The effect is real but can be subtle depending on how sharply the front
+actually curves for a given instance and direction — the gap between spacing strategies is more dramatic
+the more the front bends.
+
+![Budget-uniform spacing (left) versus arclength spacing (right), both against the same dense reference front (gray), from a real 5-point `n_budget` solve on the Norse dataset: arclength spacing shifts points toward the steeper part of the curve rather than clustering them evenly in cost.](assets/arclength_intuition.png)
+
+- Behavior: a pseudo-arclength predictor-corrector scheme [^Keller1977][^AllgowerGeorg1990]. The two budget endpoints are solved first to anchor and normalise the (cost, diversity) metric. Each subsequent budget is then *predicted* from a finite-difference tangent, so every step advances a fixed target arclength, and *corrected* by an exact solve at that budget. A budget that fails to solve is stepped over rather than aborting the direction. The same idea has been used to trace Pareto fronts in multi-objective optimization [^Hillermeier2001][^Schutze2005].
+- `reconfigure_solver!` lets the solver's algorithm be switched (e.g. barrier to dual simplex) once per direction, right after that direction's first point, so the rest of that direction's points can warm-start off the resulting basis. See the [warm-starting tutorial](@ref warm-start-tutorial) and the [IO Reference](15-io.md) for details.
+
 ## Evolutionary Methods
 
 Evolutionary algorithms have been proposed as an alternative method to mathematical programming for generating alternative solutions by Zechman and Ranjithan [^Zechman].
@@ -117,10 +175,14 @@ The algorithm terminates when the subpopulations have converged, or the maximum 
 
 ## References
 
+[^AllgowerGeorg1990]: Eugene L. Allgower and Kurt Georg. Numerical Continuation Methods: An Introduction. Springer Series in Computational Mathematics, vol. 13. Springer-Verlag, 1990.
 [^Evelina2012]: Evelina Trutnevyte et al. “Context-specific energy strategies: coupling energy system visions with feasible implementation scenarios”. In: Environmental science & technology 46.17 (2012), pp. 9240–9248
+[^Hillermeier2001]: Claus Hillermeier. Nonlinear Multiobjective Optimization: A Generalized Homotopy Approach. International Series of Numerical Mathematics, vol. 135. Birkhäuser Basel, 2001.
 [^HSJ1982]: E Downey Brill Jr, Shoou-Yuh Chang, and Lewis D Hopkins. “Modeling to generate alternatives: The HSJ approach and an illustration using a problem in land use planning”. In: Management Science 28.3 (1982), pp. 221–235.
+[^Keller1977]: Herbert B. Keller. “Numerical solution of bifurcation and nonlinear eigenvalue problems”. In: Applications of Bifurcation Theory, ed. Paul H. Rabinowitz. Academic Press, 1977, pp. 359–384.
 [^Lukas2019]: Lukas Nacken et al. “Integrated renewable energy systems for Germany–A model-based exploration of the decision space”. In: 2019 16th international conference on the European energy market (EEM). IEEE. 2019, pp. 1–8.
 [^RANDV2017]: Philip B Berntsen and Evelina Trutnevyte. “Ensuring diversity of national energy scenarios: Bottomup energy system model with Modeling to Generate Alternatives”. In: Energy 126 (2017), pp. 886–898.
+[^Schutze2005]: Oliver Schütze, Alessandro Dell'Aere, and Michael Dellnitz. “On Continuation Methods for the Numerical Treatment of Multi-Objective Optimization Problems”. In: Dagstuhl Seminar Proceedings 04461: Practical Approaches to Multi-Objective Optimization. Schloss Dagstuhl–Leibniz-Zentrum für Informatik, 2005.
 [^SPORES2020]: Francesco Lombardi et al. “Policy decision support for renewables deployment through spatially explicit practically optimal alternatives”. In: Joule 4.10 (2020), pp. 2185–2207.
 [^VandeLaar2025]: Luuk van de Laar. "Dominance-Aware Generation of Near-Optimal Alternatives in Energy System Models", TU Delft thesis, 2025
 [^Zechman]: E. M. Zechman and S. R. Ranjithan, “An evolutionary algorithm to generate alternatives (eaga) for engineering optimization problems,” Engineering Optimization, vol. 36, no. 5, pp. 539–553, 2004.

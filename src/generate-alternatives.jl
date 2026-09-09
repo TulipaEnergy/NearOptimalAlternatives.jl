@@ -1,6 +1,41 @@
 export generate_alternatives_optimization!, generate_alternatives_metaheuristics
 
 """
+    _alt_solve_diagnostics(model) -> NamedTuple
+
+Read-only per-solve diagnostics (solve time, simplex/barrier iteration counts,
+termination status) for the structured `"alternative_solved"` log record emitted
+by `generate_alternatives_optimization!`. Pure introspection - does not call
+`optimize!` or touch model/solver state. Each getter is individually guarded
+since not every solver/status exposes every attribute (e.g. an LP solved by an
+interior-point method with no crossover reports simplex_iterations = 0, not an
+error, but some solvers do not implement the iteration-count attributes at all).
+"""
+function _alt_solve_diagnostics(model::JuMP.Model)
+    solve_time = try
+        JuMP.solve_time(model)
+    catch
+        NaN
+    end
+    simplex_it = try
+        simplex_iterations(model)
+    catch
+        missing
+    end
+    barrier_it = try
+        barrier_iterations(model)
+    catch
+        missing
+    end
+    return (
+        solve_time = solve_time,
+        simplex_iterations = simplex_it,
+        barrier_iterations = barrier_it,
+        status = string(termination_status(model)),
+    )
+end
+
+"""
 results = generate_alternatives_optimization!(
   model::JuMP.Model,
   optimality_gap::Float64,
@@ -9,6 +44,7 @@ results = generate_alternatives_optimization!(
   modeling_method::Symbol = :Max_Distance,
   metric::Distances.SemiMetric = SqEuclidean(),
   fixed_variables::Vector{VariableRef} = VariableRef[],
+  reconfigure_solver!::Union{Nothing,Function} = nothing,
 ) where {T<:Union{VariableRef,AffExpr},N}
 Generate `n_alternatives` solutions to `model` which are as distant from the optimum and each other, but with a maximum `optimality_gap`, using optimization.
 
@@ -20,6 +56,16 @@ Generate `n_alternatives` solutions to `model` which are as distant from the opt
 - `modeling_method::Symbol = :Max_Distance`: the method used to model the problem for generating alternatives.
 - `metric::Distances.Metric=SqEuclidean()`: the metric used to maximise the difference between alternatives and the optimal solution.
 - `fixed_variables::Vector{VariableRef}=[]`: a subset of all variables of `model` that are not allowed to be changed when seeking for alternatives.
+- `reconfigure_solver!::Union{Nothing,Function}=nothing`: an optional `model -> nothing`
+  callback invoked once, after alternative #1 is found and before alternative #2 is
+  sought. Use it to switch the attached solver's algorithm (e.g. from barrier to
+  primal simplex) so that alternatives #2.. are warm-started from alternative #1's
+  basis instead of solved cold each time - the feasible region is fixed from here on
+  (only the objective changes between iterations), which is the favourable case for a
+  primal-simplex warm start. The callback should only set solver attributes (e.g.
+  `model -> set_optimizer_attribute(model, "Method", 0)` for Gurobi); this function
+  handles the mandatory re-solve that JuMP requires after any attribute change.
+  Ignored when `n_alternatives == 1` (no further solves would use it).
 """
 function generate_alternatives_optimization!(
     model::JuMP.Model,
@@ -30,6 +76,7 @@ function generate_alternatives_optimization!(
     modeling_method::Symbol = :Max_Distance,
     metric::Distances.SemiMetric = SqEuclidean(),
     fixed_variables::Vector{VariableRef} = VariableRef[],
+    reconfigure_solver!::Union{Nothing,Function} = nothing,
 ) where {T<:Union{VariableRef,AffExpr},N}
     if !is_solved_and_feasible(model)
         throw(ArgumentError("JuMP model has not been solved."))
@@ -60,6 +107,20 @@ function generate_alternatives_optimization!(
     JuMP.optimize!(model)
     @info "Solution #1/$n_alternatives found." solution_summary(model)
     update_solutions!(result, model)
+    d = _alt_solve_diagnostics(model)
+    @info "alternative_solved" index = 1 solve_time = d.solve_time simplex_iterations =
+        d.simplex_iterations barrier_iterations = d.barrier_iterations status = d.status
+
+    if reconfigure_solver! !== nothing && n_alternatives > 1
+        @info "Reconfiguring solver algorithm for the remaining alternatives."
+        reconfigure_solver!(model)
+        # Changing a solver attribute invalidates JuMP's cached solve state, so
+        # the model must be re-solved before update_objective_function! can read
+        # the current solution values below. The feasible region and objective
+        # are UNCHANGED at this point, so a warm solver re-confirms the same
+        # optimum in a handful of pivots at most, regardless of problem size.
+        JuMP.optimize!(model)
+    end
 
     # If n_solutions > 1, we repeat the solving process to generate multiple solutions.
     for i = 2:n_alternatives
@@ -74,6 +135,9 @@ function generate_alternatives_optimization!(
         JuMP.optimize!(model)
         @info "Solution #$i/$n_alternatives found." solution_summary(model)
         update_solutions!(result, model)
+        d = _alt_solve_diagnostics(model)
+        @info "alternative_solved" index = i solve_time = d.solve_time simplex_iterations =
+            d.simplex_iterations barrier_iterations = d.barrier_iterations status = d.status
     end
 
     return result

@@ -11,3 +11,13 @@ docs/build/
 env
 node_modules
 env
+
+# Claude Code
+.claude/
+
+# Thesis writing artifacts (not part of the package)
+*.tex
+*.bib
+
+# Local test/input datasets (not needed in the repo)
+data/
