@@ -61,6 +61,17 @@ w_i^k = w_i^{k-1} + \frac{x_i^{k-1}}{x_i^{\text{max}}}, \quad \forall k, 1 \leq 
 w_i^0 = 0.
 ```
 
+!!! info "Variables without an upper bound"
+    SPORES needs $x_i^{\text{max}}$ for every variable it scores, so **every variable passed to SPORES
+    must have a finite upper bound** — `Spores_initial!`/`Spores_update!` raise an `ArgumentError`
+    immediately if one doesn't (checked before any solve, not left to fail silently; a variable with an
+    upper bound of exactly `0` is handled differently and needs no special care — SPORES just skips it,
+    weight contribution `0` regardless). If your model has a variable with no natural capacity limit, you
+    have three options:
+    - Give it a large-but-finite bound if a sensible one exists (e.g. an installed-capacity cap well above anything the optimizer would realistically choose).
+    - Leave it out of the `variables` argument passed to `generate_alternatives_optimization!`/`_sweep!`/`_arclength!`. SPORES then simply never perturbs that variable — it is neither part of the near-optimal search nor fixed, just outside SPORES' scoring.
+    - Use a different modeling method instead — every other method on this page (Max-Distance, HSJ, Min/Max Variables, Random Vector, Directionally Weighted Variables) works on unbounded variables; SPORES is the only one that requires them.
+
 ### Min/Max Variables (`:Min_Max_Variables`)
 
 - Files: `MGA-Methods/Min-Max-Variables.jl`
@@ -113,8 +124,23 @@ The methods above choose which *direction* to search in at each iteration (the o
 
 - Files: `arclength-alternatives.jl`
 - Goal: like the budget sweep, but places the `n_budget` points evenly *along the trade-off curve* (cost vs. diversity) instead of evenly along the budget axis, so points are not wasted where the front is flat and are concentrated where it curves sharply.
+
+**The intuition.** "Arclength" is not a 2D-only idea, even though it sounds like one — it refers to the
+length along the *cost-vs-diversity curve*, a 2D summary plot you get by plotting each alternative's cost
+against its diversity value, regardless of whether the underlying model has 3 variables or 3 million.
+Every point on that curve is a full alternative in the model's own (possibly huge) variable space; the
+curve itself just tracks two numbers per point. Picture a hiking trail traced on a map: if you place rest
+stops at even *map distance* apart, you'll cluster stops uselessly on the flat, easy stretches and skip
+past the steep switchbacks where the trail actually changes direction. Placing stops at even *distance
+walked along the trail* instead puts more stops exactly where the path bends and fewer where it runs
+straight. Budget-uniform spacing is the first kind of stop-placement (even in cost); arclength spacing is
+the second (even along the curve) — see the figure below for what this looks like on a front that starts
+steep and flattens out, the shape most near-optimal fronts actually have.
+
+![Budget-uniform spacing (left) clusters points on the flat tail and leaves a gap exactly where the front bends most; arclength spacing (right) places points evenly along the curve itself, concentrating them where the front actually changes.](assets/arclength_intuition.png)
+
 - Behavior: a pseudo-arclength predictor-corrector scheme [^Keller1977][^AllgowerGeorg1990]. The two budget endpoints are solved first to anchor and normalise the (cost, diversity) metric. Each subsequent budget is then *predicted* from a finite-difference tangent, so every step advances a fixed target arclength, and *corrected* by an exact solve at that budget. A budget that fails to solve is stepped over rather than aborting the direction. The same idea has been used to trace Pareto fronts in multi-objective optimization [^Hillermeier2001][^Schutze2005].
-- `reconfigure_solver!` lets the solver's algorithm be switched (e.g. barrier to dual simplex) once per direction, right after that direction's first point, so the rest of that direction's points can warm-start off the resulting basis. See the [IO Reference](15-io.md) for details.
+- `reconfigure_solver!` lets the solver's algorithm be switched (e.g. barrier to dual simplex) once per direction, right after that direction's first point, so the rest of that direction's points can warm-start off the resulting basis. See the [warm-starting tutorial](@ref warm-start-tutorial) and the [IO Reference](15-io.md) for details.
 
 ## Evolutionary Methods
 
