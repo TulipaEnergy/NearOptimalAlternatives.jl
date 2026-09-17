@@ -11,7 +11,11 @@ export Spores_update!, Spores_initial!
     ) where {T<:Union{VariableRef,AffExpr}, N}
 Initialize the objective of a JuMP model using the Spores method to generate alternative solutions.
 This function sets a new objective that minimizes the weighted sum of the decision variables, where weights are based on the  variable value of the original optimal solution. Fixed variables are locked at their optimal values.
-For this method to work the upper bound of the variables must be set.
+Every variable in `variables` must have a finite upper bound: weights are `value(v) / upper_bound(v)`,
+so an unbounded variable has no reference capacity to score against and throws an `ArgumentError`
+(matching the corresponding hard error in Calliope's own `relative_deployment` SPORES scoring
+algorithm, rather than silently skipping it). A variable whose upper bound is exactly `0` is
+skipped instead, since its weight contribution is `0` regardless.
 # Arguments
 - `model::JuMP.Model`: a solved JuMP model whose objective is to be redefined for alternative generation.
 - `variables::AbstractArray{T,N}`: the variables involved in the objective, typically a vector or matrix of `VariableRef`s or `AffExpr`s.
@@ -32,6 +36,18 @@ function Spores_initial!(
 ) where {T<:Union{VariableRef,AffExpr},N}
     # new objective function consist of the n variables in variables
     for (i, v) in enumerate(variables)
+        if !has_upper_bound(v)
+            throw(
+                ArgumentError(
+                    "Cannot score SPORES: variable $(name(v)) has no upper bound. " *
+                    "SPORES weights are value(v) / upper_bound(v); an unbounded variable has " *
+                    "no reference capacity to score against. Either set a finite upper bound " *
+                    "on it, or exclude it from `variables`.",
+                ),
+            )
+        elseif upper_bound(v) == 0
+            continue
+        end
         weights[i] = weights[i] + value(v) / upper_bound(v)
     end
     # Fix the variables that are fixed
@@ -53,6 +69,9 @@ end
     ) where {T<:Union{VariableRef,AffExpr}, N}
 Update the objective of a JuMP model using the Spores method to generate the next alternative solution.
 This function redefines the objective based on the current optimal solution of the model, updating the weights with respect to the current variable values.
+Every variable in `variables` must have a finite upper bound, for the same reason as
+[`Spores_initial!`](@ref): an unbounded variable throws an `ArgumentError` rather than being
+silently skipped.
 # Arguments
 - `model::JuMP.Model`: the JuMP model to be updated.
 - `variables::AbstractArray{T,N}`: the decision variables involved in the updated objective.
@@ -71,6 +90,18 @@ function Spores_update!(
 ) where {T<:Union{VariableRef,AffExpr},N}
     # new objective function consist of the n variables in variables
     for (i, v) in enumerate(variables)
+        if !has_upper_bound(v)
+            throw(
+                ArgumentError(
+                    "Cannot score SPORES: variable $(name(v)) has no upper bound. " *
+                    "SPORES weights are value(v) / upper_bound(v); an unbounded variable has " *
+                    "no reference capacity to score against. Either set a finite upper bound " *
+                    "on it, or exclude it from `variables`.",
+                ),
+            )
+        elseif upper_bound(v) == 0
+            continue
+        end
         weights[i] = weights[i] + value(v) / upper_bound(v)
     end
 

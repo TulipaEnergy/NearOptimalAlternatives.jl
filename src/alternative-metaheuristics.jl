@@ -1,3 +1,4 @@
+
 """
     Structure representing a problem that can be solved by Metaheuristics.jl and the algorithm to solve it.
 """

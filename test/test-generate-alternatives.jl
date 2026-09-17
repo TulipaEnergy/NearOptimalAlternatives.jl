@@ -53,6 +53,65 @@
     end
 end
 
+@testset "Test generate_alternatives_optimization! reconfigure_solver!." begin
+    build_model() = begin
+        model = JuMP.Model(Ipopt.Optimizer)
+        set_silent(model)
+        @variable(model, 0 ≤ x_1 ≤ 1)
+        @variable(model, 0 ≤ x_2 ≤ 1)
+        @objective(model, Max, x_1 + x_2)
+        JuMP.optimize!(model)
+        model
+    end
+
+    @testset "reconfigure_solver! is called exactly once, after alternative #1, for n_alternatives > 1" begin
+        model = build_model()
+        calls = Ref(0)
+        reconfigure! = m -> (calls[] += 1)
+
+        results = NearOptimalAlternatives.generate_alternatives_optimization!(
+            model,
+            0.1,
+            all_variables(model),
+            3;
+            modeling_method = :Spores,
+            reconfigure_solver! = reconfigure!,
+        )
+
+        @test calls[] == 1
+        @test length(results.solutions) == 3
+    end
+
+    @testset "reconfigure_solver! is never called when n_alternatives == 1" begin
+        model = build_model()
+        calls = Ref(0)
+        reconfigure! = m -> (calls[] += 1)
+
+        NearOptimalAlternatives.generate_alternatives_optimization!(
+            model,
+            0.1,
+            all_variables(model),
+            1;
+            modeling_method = :Spores,
+            reconfigure_solver! = reconfigure!,
+        )
+
+        @test calls[] == 0
+    end
+
+    @testset "no reconfigure_solver! given: default behaviour is unaffected" begin
+        model = build_model()
+        results = NearOptimalAlternatives.generate_alternatives_optimization!(
+            model,
+            0.1,
+            all_variables(model),
+            2;
+            modeling_method = :Spores,
+        )
+        @test length(results.solutions) == 2
+    end
+end
+
 @testset "Test generate alternatives using metaheuristics." begin
     @testset "Make sure error is thrown when JuMP model is not solved." begin
         optimizer = Ipopt.Optimizer

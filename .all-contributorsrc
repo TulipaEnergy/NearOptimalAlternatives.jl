@@ -75,6 +75,16 @@
         "ideas",
         "projectManagement"
       ]
+    },
+    {
+      "login": "AlexPacurar01",
+      "name": "Alexandru Pacurar",
+      "avatar_url": "https://avatars.githubusercontent.com/AlexPacurar01",
+      "profile": "https://github.com/AlexPacurar01",
+      "contributions": [
+        "doc",
+        "code"
+      ]
     }
   ]
 }

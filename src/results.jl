@@ -1,10 +1,20 @@
 """
 Structure holding the solutions for the near-optimal alternatives.
+
+`tags` is optional per-solution metadata (e.g. the discovery direction and budget
+level a point came from in a budget sweep). It is empty for the classic
+single-budget generators and is only populated by [`generate_alternatives_sweep!`](@ref).
 """
 mutable struct AlternativeSolutions
     solutions::Vector{Dict{VariableRef,Float64}}
     objective_values::Vector{Float64}
+    tags::Vector{NamedTuple}
 end
+
+# Backward-compatible constructor: existing call sites build `AlternativeSolutions([], [])`
+# and never touch `tags`, so default it to empty.
+AlternativeSolutions(solutions, objective_values) =
+    AlternativeSolutions(solutions, objective_values, NamedTuple[])
 
 """
     update_solutions!(results::AlternativeSolutions, model::JuMP.Model)

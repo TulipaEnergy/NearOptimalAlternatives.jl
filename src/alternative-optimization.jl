@@ -1,8 +1,10 @@
 export create_alternative_generating_problem!, update_objective_function!
 
 """
-const METHOD_DISPATCH shows the mapping of method symbols to their corresponding update functions for the modelling-for-generating-alternatives problem.
-It is used to dynamically select the appropriate function based on the method specified in the `create_alternative_generating_problem!` function.
+Maps each `modeling_method` symbol to its corresponding update function, called on every
+iteration after the first to pick the next direction. Used by `update_objective_function!`
+to dynamically select the appropriate function based on the method specified in
+`create_alternative_generating_problem!`.
 """
 const METHOD_DISPATCH_UPDATE = Dict{Symbol,Function}(
     :HSJ => HSJ_update!,
@@ -13,7 +15,11 @@ const METHOD_DISPATCH_UPDATE = Dict{Symbol,Function}(
     :Max_Distance => Dist_update!,
 )
 
-
+"""
+Maps each `modeling_method` symbol to its corresponding initial-direction function, called
+once to pick the first direction. Used by `create_alternative_generating_problem!` to
+dynamically select the appropriate function based on the specified method.
+"""
 const METHOD_DISPATCH_INITIAL = Dict{Symbol,Function}(
     :HSJ => HSJ_initial!,
     :Spores => Spores_initial!,
